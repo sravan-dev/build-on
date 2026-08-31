@@ -1,0 +1,211 @@
+-- =====================================================
+-- VEHICLE MANAGEMENT TABLES - Run this to add all missing vehicle tables
+-- =====================================================
+
+-- Vehicle Master Data
+CREATE TABLE IF NOT EXISTS `vehicles` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `vehicle_number` VARCHAR(100) NOT NULL,
+  `make` VARCHAR(100) NOT NULL DEFAULT 'Unknown',
+  `model` VARCHAR(100) NOT NULL DEFAULT 'Unknown',
+  `year` INT NULL,
+  `chassis_number` VARCHAR(100) NULL,
+  `engine_number` VARCHAR(100) NULL,
+  `fuel_type` VARCHAR(50) DEFAULT 'Petrol',
+  `assigned_driver` VARCHAR(255) NULL,
+  `registration_renewal_date` DATE NULL,
+  `insurance_renewal_date` DATE NULL,
+  `purchase_date` DATE NULL,
+  `purchase_price` DECIMAL(10,2) DEFAULT 0,
+  `current_mileage` DECIMAL(10,2) DEFAULT 0,
+  `vehicle_status` VARCHAR(50) DEFAULT 'Active',
+  `name` TEXT NULL,
+  `type` TEXT NULL,
+  `registration` TEXT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Vehicle Daily Logs
+CREATE TABLE IF NOT EXISTS `vehicle_daily_logs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `vehicle_id` INT NOT NULL,
+  `log_date` DATE NOT NULL,
+  `opening_km` DECIMAL(10,2) NOT NULL,
+  `closing_km` DECIMAL(10,2) NOT NULL,
+  `total_km` DECIMAL(10,2) NOT NULL,
+  `driver_name` VARCHAR(255) NULL,
+  `route_trip` TEXT NULL,
+  `remarks` TEXT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE,
+  UNIQUE KEY `vehicle_date_unique` (vehicle_id, log_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Vehicle Expenses
+CREATE TABLE IF NOT EXISTS `vehicle_expenses` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `vehicle_id` INT NOT NULL,
+  `expense_date` DATE NOT NULL,
+  `expense_type` VARCHAR(100) NOT NULL,
+  `amount` DECIMAL(10,2) NOT NULL,
+  `vendor_garage` VARCHAR(255) NULL,
+  `invoice_number` VARCHAR(100) NULL,
+  `description` TEXT NULL,
+  `attachment_path` VARCHAR(500) NULL,
+  `odometer_reading` DECIMAL(10,2) NULL,
+  `paid_by` VARCHAR(255) NULL,
+  `payment_method` VARCHAR(100) DEFAULT 'company_cash',
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Vehicle Fuel Records
+CREATE TABLE IF NOT EXISTS `vehicle_fuel_records` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `vehicle_id` INT NOT NULL,
+  `fuel_date` DATE NOT NULL,
+  `liters` DECIMAL(10,2) NOT NULL,
+  `amount` DECIMAL(10,2) NOT NULL,
+  `price_per_liter` DECIMAL(10,2) NOT NULL,
+  `odometer_reading` DECIMAL(10,2) NOT NULL,
+  `driver_name` VARCHAR(255) NULL,
+  `fuel_station` VARCHAR(255) NULL,
+  `mileage_km_per_liter` DECIMAL(10,2) NULL,
+  `previous_odometer` DECIMAL(10,2) NULL,
+  `paid_by` VARCHAR(255) NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Vehicle Maintenance
+CREATE TABLE IF NOT EXISTS `vehicle_maintenance` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `vehicle_id` INT NOT NULL,
+  `service_date` DATE NOT NULL,
+  `service_type` VARCHAR(100) NOT NULL,
+  `details` TEXT NULL,
+  `km_reading` DECIMAL(10,2) NOT NULL,
+  `amount` DECIMAL(10,2) DEFAULT 0,
+  `next_due_km` DECIMAL(10,2) NULL,
+  `garage_name` VARCHAR(255) NULL,
+  `invoice_number` VARCHAR(100) NULL,
+  `attachment_path` VARCHAR(500) NULL,
+  `paid_by` VARCHAR(255) NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Vehicle Alerts
+CREATE TABLE IF NOT EXISTS `vehicle_alerts` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `vehicle_id` INT NOT NULL,
+  `alert_type` VARCHAR(100) NOT NULL,
+  `alert_message` TEXT NOT NULL,
+  `due_date` DATE NULL,
+  `due_km` DECIMAL(10,2) NULL,
+  `is_active` TINYINT(1) DEFAULT 1,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `dismissed_at` DATETIME NULL,
+  FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Vehicle Income
+CREATE TABLE IF NOT EXISTS `vehicle_income` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `vehicle_id` INT NOT NULL,
+  `income_date` DATE NOT NULL,
+  `amount` DECIMAL(10,2) NOT NULL,
+  `description` TEXT NULL,
+  `project_id` INT NULL,
+  `invoice_number` VARCHAR(100) NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================
+-- INSERT A SAMPLE VEHICLE SO YOU CAN TEST
+-- =====================================================
+INSERT INTO `vehicles` (`vehicle_number`, `make`, `model`, `year`, `fuel_type`, `vehicle_status`) 
+VALUES ('QA-12345', 'Toyota', 'Hilux', 2022, 'Diesel', 'Active');
+
+-- Show success message
+SELECT 'All vehicle tables created successfully!' AS Message;
+
+-- Fixed utf8mb4_uca1400_ai_ci collation issue in u218342218_buildon.sql
+
+-- Added payment_method column to credit_card_transactions
+ALTER TABLE credit_card_transactions ADD COLUMN payment_method VARCHAR(50) DEFAULT 'company_cash';
+
+-- Add payment_method to advance_payments
+ALTER TABLE advance_payments ADD COLUMN payment_method VARCHAR(50);
+
+-- Create salary_payments table
+CREATE TABLE IF NOT EXISTS salary_payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NOT NULL,
+    payment_date DATE NOT NULL,
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    payment_method VARCHAR(50) NOT NULL,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
+
+-- Add payment_method to advance_payments
+ALTER TABLE advance_payments ADD COLUMN payment_method VARCHAR(50);
+
+-- Create salary_payments table
+CREATE TABLE IF NOT EXISTS salary_payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NOT NULL,
+    payment_date DATE NOT NULL,
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    payment_method VARCHAR(50) NOT NULL,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
+
+-- Add payment_method to employees table
+ALTER TABLE employees ADD COLUMN payment_method VARCHAR(50) DEFAULT 'company_bank';
+
+-- Fix purchase_payments.paid_by column data type (should be VARCHAR not DECIMAL)
+ALTER TABLE purchase_payments MODIFY COLUMN paid_by VARCHAR(255) DEFAULT NULL;
+
+-- Fix purchase_payments.paid_by column data type (should be VARCHAR not DECIMAL)
+ALTER TABLE purchase_payments MODIFY COLUMN paid_by VARCHAR(255) DEFAULT NULL;
+
+-- Create contractors table
+CREATE TABLE IF NOT EXISTS contractors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(50),
+    email VARCHAR(255),
+    address TEXT,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Create subcontracts table
+CREATE TABLE IF NOT EXISTS subcontracts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    project_id INT NOT NULL,
+    contractor_id INT NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    description TEXT,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_date DATE NOT NULL,
+    payment_account VARCHAR(100),
+    cheque_number VARCHAR(50),
+    bank_name VARCHAR(100),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (contractor_id) REFERENCES contractors(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Add GL account for subcontractor expenses
+INSERT INTO accounts (account_code, account_name, account_type, is_active) 
+VALUES ('5200', 'Subcontractor Expense', 'expense', 1)
+ON DUPLICATE KEY UPDATE account_name = 'Subcontractor Expense';

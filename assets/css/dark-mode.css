@@ -1,0 +1,228 @@
+/* Dark Mode overrides for Buildon Accounts */
+:root {
+    --bg: #0b1020;
+    --surface: #0f1724;
+    --muted: #9aa4b2;
+    --text: #e6eef6;
+    --accent: #f07d00;
+    --card: linear-gradient(135deg, rgba(240, 125, 0, 0.12), rgba(247, 166, 0, 0.06));
+}
+
+html,
+body {
+    background: var(--bg) !important;
+    color: var(--text) !important;
+}
+
+/* Main layout areas */
+.sidebar,
+.nav,
+.sidenav {
+    background: linear-gradient(180deg, #0b1220 0%, #0f1724 100%) !important;
+    color: var(--muted) !important;
+}
+
+.sidebar a,
+.nav a,
+.sidenav a {
+    color: var(--muted) !important;
+}
+
+.sidebar a.active,
+.nav a.active,
+.sidenav a.active {
+    background: rgba(240, 125, 0, 0.12) !important;
+    color: var(--text) !important;
+}
+
+.card,
+.panel,
+.box {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.03) !important;
+    color: var(--text) !important;
+}
+
+.header,
+header,
+.topbar {
+    background: transparent !important;
+}
+
+/* Buttons and accents */
+.btn-primary,
+.btn,
+.btn:focus,
+.btn:active {
+    background: var(--accent) !important;
+    color: #fff !important;
+    border-color: rgba(240, 125, 0, 0.2) !important;
+}
+
+/* Tables */
+.table thead th {
+    color: var(--muted) !important;
+}
+
+.table tbody td {
+    color: var(--text) !important;
+    background: transparent !important;
+}
+
+/* Form inputs: use normal (light) inputs for readability across the app */
+input,
+textarea,
+select {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid rgba(17, 24, 39, 0.08) !important;
+}
+
+.logo-box {
+    background: linear-gradient(135deg, #ffb88c33, #ffcc7733) !important;
+    border-radius: 12px;
+}
+
+/* Slightly dim non-active icons */
+.sidebar i,
+.nav i {
+    opacity: 0.65;
+}
+
+/* Ensure links are readable */
+a,
+.link {
+    color: #9fbdf0 !important;
+}
+
+/* Small utility */
+.text-muted {
+    color: var(--muted) !important;
+}
+
+/* Keep form inputs light inside settings page for readability */
+.settings-page input,
+.settings-page textarea,
+.settings-page select {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid rgba(17, 24, 39, 0.08) !important;
+}
+
+.settings-page .bg-white {
+    background: #ffffff !important;
+}
+
+.settings-page .text-gray-900 {
+    color: #111827 !important;
+}
+
+.settings-page .text-gray-600 {
+    color: #4b5563 !important;
+}
+
+.settings-page .text-gray-700 {
+    color: #374151 !important;
+}
+
+.settings-page .text-gray-500 {
+    color: #6b7280 !important;
+}
+
+/* Main content adjustments when using off-canvas sidebar */
+.main-content {
+    background: transparent;
+    min-height: 100vh;
+}
+
+@media (max-width: 767px) {
+    .main-content {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+/* Card styling to match reference (rounded, soft shadow, subtle border) */
+.bg-white.rounded-lg.shadow-md {
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06) !important;
+    border: 1px solid rgba(15, 23, 42, 0.04) !important;
+    overflow: visible !important;
+}
+
+/* Slightly reduce inner padding on card body for tighter look */
+.bg-white.rounded-lg.shadow-md>.p-6 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+/* Card header style: heavier title and a subtle divider */
+.bg-white.rounded-lg.shadow-md>.p-6.border-b {
+    padding-bottom: 0.75rem !important;
+}
+
+.bg-white.rounded-lg.shadow-md h2,
+.bg-white.rounded-lg.shadow-md h3 {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Also apply to generic card/panel classes */
+.card,
+.panel {
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06) !important;
+    border: 1px solid rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Sidebar profile card */
+.sidebar-profile {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+}
+
+.sidebar-profile .text-xs {
+    opacity: 0.95;
+}
+
+/* Theme toggle button look */
+#themeLight,
+#themeDark {
+    font-weight: 600;
+}
+
+#themeLight {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+#themeDark {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* Ensure our new sidebar link styles are visible in dark mode */
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.sidebar .nav-link .nav-icon {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.sidebar .nav-link.active {
+    background: linear-gradient(90deg, rgba(240, 125, 0, 0.35), rgba(240, 125, 0, 0.15)) !important;
+    color: #fff !important;
+    border-left: 3px solid #f07d00 !important;
+    font-weight: 600 !important;
+}
+
+.sidebar .nav-link.active .nav-icon {
+    color: #f07d00 !important;
+}
+
+.sidebar .theme-toggle button {
+    color: #fff !important;
+}

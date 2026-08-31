@@ -1,0 +1,9 @@
+{
+  "_comment": "Copy this file to sql/db.config.json and fill in the real values. db.config.json is gitignored and must never be committed. Environment variables of the same names take precedence over this file.",
+  "PROD_DB_TYPE": "mysql",
+  "PROD_DB_HOST": "localhost",
+  "PROD_DB_PORT": "3306",
+  "PROD_DB_NAME": "buildon_qatar",
+  "PROD_DB_USER": "buildon_qatar",
+  "PROD_DB_PASS": ""
+}

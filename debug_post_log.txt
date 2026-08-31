@@ -1,0 +1,326 @@
+2026-01-18 21:12:55 - POST: Array
+(
+    [user_id] => 
+    [name] => Khurshid Khan
+    [employee_id] => BUE115
+    [qatar_id] => 27858607480
+    [qatar_id_expiry] => 2026-12-19
+    [email] => 
+    [phone] => 
+    [position] => Business development manager
+    [department] => 
+    [hire_date] => 2026-01-18
+    [status] => active
+    [address] => 
+    [passport_number] => 
+    [passport_expiry] => 
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_cash
+    [monthly_salary] => 
+    [room_allowance] => 
+    [food_allowance] => 
+    [telephone_allowance] => 
+    [per_day_rate] => 
+    [per_hour_rate] => 
+    [notes] => 
+    [add] => 
+)
+
+2026-02-14 20:43:38 - POST: Array
+(
+    [user_id] => 54
+    [name] => 
+    [employee_id] => SRM
+    [qatar_id] => 123456
+    [qatar_id_expiry] => 2026-02-28
+    [email] => vosthetic@gmail.com
+    [phone] => 09074812915
+    [position] => developer
+    [department] => developer
+    [hire_date] => 2026-02-14
+    [status] => active
+    [address] => malappuram 32
+    [passport_number] => 
+    [passport_expiry] => 
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_bank
+    [monthly_salary] => 
+    [room_allowance] => 
+    [food_allowance] => 
+    [telephone_allowance] => 
+    [per_day_rate] => 
+    [per_hour_rate] => 
+    [notes] => 
+    [add] => 
+)
+
+2026-02-14 20:52:25 - POST: Array
+(
+    [user_id] => 
+    [name] => Khurshid Khan
+    [employee_id] => BUE012
+    [qatar_id] => 27858607480
+    [qatar_id_expiry] => 2029-12-19
+    [email] => 
+    [phone] => 
+    [position] => Business Development Manager
+    [department] => 
+    [hire_date] => 2026-01-18
+    [status] => active
+    [address] => 
+    [passport_number] => 
+    [passport_expiry] => 
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_bank
+    [monthly_salary] => 
+    [room_allowance] => 
+    [food_allowance] => 
+    [telephone_allowance] => 
+    [per_day_rate] => 
+    [per_hour_rate] => 
+    [notes] => 
+    [add] => 
+)
+
+2026-02-14 20:56:04 - POST: Array
+(
+    [user_id] => 54
+    [name] => 
+    [employee_id] => SRM
+    [qatar_id] => 123456
+    [qatar_id_expiry] => 2026-02-28
+    [email] => vosthetic@gmail.com
+    [phone] => 09074812915
+    [position] => developer
+    [department] => developer
+    [hire_date] => 2026-02-14
+    [status] => active
+    [address] => malappuram 32
+    [passport_number] => 
+    [passport_expiry] => 
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_bank
+    [monthly_salary] => 
+    [room_allowance] => 
+    [food_allowance] => 
+    [telephone_allowance] => 
+    [per_day_rate] => 
+    [per_hour_rate] => 
+    [notes] => 
+    [add] => 
+)
+
+2026-02-14 20:58:08 - POST: Array
+(
+    [user_id] => 
+    [name] => Khurshid Khan
+    [employee_id] => BUE012
+    [qatar_id] => 27858607480
+    [qatar_id_expiry] => 2029-12-19
+    [email] => 
+    [phone] => 
+    [position] => Business Development Manager
+    [department] => 
+    [hire_date] => 2026-01-18
+    [status] => active
+    [address] => 
+    [passport_number] => 
+    [passport_expiry] => 
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_bank
+    [monthly_salary] => 
+    [room_allowance] => 
+    [food_allowance] => 
+    [telephone_allowance] => 
+    [per_day_rate] => 
+    [per_hour_rate] => 
+    [notes] => 
+    [add] => 
+)
+
+2026-02-14 21:11:46 - POST: Array
+(
+    [user_id] => 54
+    [name] => 
+    [employee_id] => SRM
+    [qatar_id] => 123456
+    [qatar_id_expiry] => 2026-02-28
+    [email] => vosthetic@gmail.com
+    [phone] => 09074812915
+    [position] => developer
+    [department] => developer
+    [hire_date] => 2026-02-14
+    [status] => active
+    [address] => malappuram 32
+    [passport_number] => 
+    [passport_expiry] => 
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_bank
+    [monthly_salary] => 
+    [room_allowance] => 
+    [food_allowance] => 
+    [telephone_allowance] => 
+    [per_day_rate] => 
+    [per_hour_rate] => 
+    [notes] => 
+    [add] => 
+)
+
+2026-02-14 21:12:03 - POST: Array
+(
+    [employeeTable_length] => 10
+    [employee_ids] => Array
+        (
+            [0] => 32
+        )
+
+    [bulk_delete] => 1
+)
+
+2026-02-20 14:14:07 - POST: Array
+(
+    [user_id] => 
+    [name] => BUE116
+    [employee_id] => 
+    [qatar_id] => 29352451291
+    [qatar_id_expiry] => 2027-02-06
+    [email] => 
+    [phone] => 
+    [position] => Electrician
+    [department] => maintainance
+    [hire_date] => 2026-02-07
+    [status] => active
+    [address] => 
+    [passport_number] => 
+    [passport_expiry] => 
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_bank
+    [monthly_salary] => 1600
+    [room_allowance] => 
+    [food_allowance] => 
+    [telephone_allowance] => 
+    [per_day_rate] => 
+    [per_hour_rate] => 
+    [notes] => 
+    [add] => 
+)
+
+2026-02-20 14:16:40 - POST: Array
+(
+    [id] => 33
+    [name] => Ahamad Mujatawa Ansari
+    [employee_id] => BUE116
+    [qatar_id] => 29352451291
+    [qatar_id_expiry] => 2027-02-06
+    [email] => 
+    [phone] => 
+    [position] => Electrician
+    [department] => maintainance
+    [hire_date] => 2026-02-07
+    [status] => active
+    [address] => 
+    [passport_number] => 
+    [passport_expiry] => 2029-09-16
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_bank
+    [monthly_salary] => 1600.00
+    [room_allowance] => 0.00
+    [food_allowance] => 0.00
+    [telephone_allowance] => 0.00
+    [per_day_rate] => 0.00
+    [per_hour_rate] => 0.00
+    [notes] => 
+    [update] => 
+)
+
+2026-02-20 14:31:04 - POST: Array
+(
+    [user_id] => 
+    [name] => Prasan
+    [employee_id] => BUE117
+    [qatar_id] => 
+    [qatar_id_expiry] => 
+    [email] => 
+    [phone] => 
+    [position] => 
+    [department] => 
+    [hire_date] => 
+    [status] => active
+    [address] => 
+    [passport_number] => 
+    [passport_expiry] => 
+    [visa_expiry] => 
+    [ticket_frequency_years] => 2
+    [last_ticket_date] => 
+    [next_ticket_date] => 
+    [emergency_contact] => 
+    [emergency_phone] => 
+    [bank_account] => 
+    [bank_name] => 
+    [payment_method] => company_bank
+    [monthly_salary] => 
+    [room_allowance] => 
+    [food_allowance] => 
+    [telephone_allowance] => 
+    [per_day_rate] => 
+    [per_hour_rate] => 
+    [notes] => 
+    [add] => 
+)
+

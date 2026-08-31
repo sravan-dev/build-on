@@ -1,0 +1,573 @@
+=== DATABASE TABLES ===
+
+TABLE: account_balances
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - account_type (TEXT) NULL
+  - balance (REAL) NULL
+
+TABLE: accounts
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - account_code (TEXT) NOT NULL
+  - account_name (TEXT) NOT NULL
+  - account_type (TEXT) NOT NULL
+  - parent_id (INTEGER) NULL
+  - is_active (INTEGER) NULL DEFAULT 1
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: advance_payments
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - employee_id (INTEGER) NOT NULL
+  - payment_date (DATE) NOT NULL
+  - amount (DECIMAL(10,2)) NOT NULL
+  - reason (TEXT) NULL
+  - approved_by (TEXT) NULL
+  - created_at (DATETIME) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: attendance
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - employee_id (INTEGER) NULL
+  - month (INTEGER) NULL
+  - year (INTEGER) NULL
+  - working_days (REAL) NULL
+  - overtime_hours (REAL) NULL
+  - total_earnings (REAL) NULL
+  - project_id (INTEGER) NULL
+
+TABLE: attendance_logs
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - daily_attendance_id (INTEGER) NOT NULL
+  - project_id (INTEGER) NULL
+  - start_time (TIME) NOT NULL
+  - end_time (TIME) NULL
+  - activity_type (TEXT) NOT NULL DEFAULT 'work'
+  - description (TEXT) NULL
+  - created_at (DATETIME) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: clients
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - contact (TEXT) NULL
+  - email (TEXT) NULL
+  - phone (TEXT) NULL
+  - address (TEXT) NULL
+  - total_invoice (REAL) NULL
+  - total_paid (REAL) NULL
+  - balance (REAL) NULL
+
+TABLE: daily_attendance
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - employee_id (INTEGER) NOT NULL
+  - attendance_date (DATE) NOT NULL
+  - in_time (TIME) NULL
+  - out_time (TIME) NULL
+  - working_hours (DECIMAL(5,2)) NULL
+  - status (TEXT) NULL DEFAULT 'Present'
+  - remarks (TEXT) NULL
+  - created_at (DATETIME) NULL DEFAULT CURRENT_TIMESTAMP
+  - break_start (TIME) NULL
+  - break_end (TIME) NULL
+  - site_id (INTEGER) NULL
+  - activity_description (TEXT) NULL
+  - is_offsite (INTEGER) NULL
+  - approval_status (TEXT) NULL DEFAULT 'pending'
+  - supervisor_note (TEXT) NULL
+  - approved_by (INTEGER) NULL
+  - approved_at (DATETIME) NULL
+  - work_site (TEXT) NULL
+
+TABLE: employees
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - employee_id (TEXT) NULL
+  - qatar_id (TEXT) NULL
+  - qatar_id_expiry (TEXT) NULL
+  - email (TEXT) NULL
+  - phone (TEXT) NULL
+  - address (TEXT) NULL
+  - position (TEXT) NULL
+  - department (TEXT) NULL
+  - hire_date (TEXT) NULL
+  - status (TEXT) NULL DEFAULT 'active'
+  - emergency_contact (TEXT) NULL
+  - emergency_phone (TEXT) NULL
+  - bank_account (TEXT) NULL
+  - bank_name (TEXT) NULL
+  - monthly_salary (REAL) NULL
+  - per_day_rate (REAL) NULL
+  - per_hour_rate (REAL) NULL
+  - advances (REAL) NULL
+  - deductions (REAL) NULL
+  - notes (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - updated_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - passport_number (TEXT) NULL
+  - passport_expiry (DATE) NULL
+  - visa_expiry (DATE) NULL
+  - ticket_frequency_years (INTEGER) NULL DEFAULT 2
+  - last_ticket_date (DATE) NULL
+  - next_ticket_date (DATE) NULL
+  - room_allowance (REAL) NULL
+  - food_allowance (REAL) NULL
+  - telephone_allowance (REAL) NULL
+
+TABLE: expenses
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - project_id (INTEGER) NULL
+  - description (TEXT) NULL
+  - amount (REAL) NULL
+  - date (TEXT) NULL
+  - payment_method (TEXT) NULL
+
+TABLE: followup_records
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - record_type (TEXT) NOT NULL
+  - record_id (INTEGER) NOT NULL
+  - followup_type (TEXT) NOT NULL
+  - channel (TEXT) NOT NULL
+  - status (TEXT) NULL DEFAULT 'pending'
+  - subject (TEXT) NULL
+  - message (TEXT) NULL
+  - sent_by (TEXT) NULL
+  - sent_at (TEXT) NULL
+  - scheduled_at (TEXT) NULL
+  - notes (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: followup_rules
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - record_type (TEXT) NOT NULL
+  - trigger_event (TEXT) NOT NULL
+  - days_offset (INTEGER) NULL
+  - template_id (INTEGER) NULL
+  - channel (TEXT) NOT NULL
+  - is_active (INTEGER) NULL DEFAULT 1
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: followup_templates
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - type (TEXT) NOT NULL
+  - channel (TEXT) NOT NULL
+  - subject (TEXT) NULL
+  - message (TEXT) NOT NULL
+  - is_active (INTEGER) NULL DEFAULT 1
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - updated_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: invoice_items
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - invoice_id (INTEGER) NULL
+  - description (TEXT) NULL
+  - quantity (REAL) NULL
+  - price (REAL) NULL
+  - total (REAL) NULL
+
+TABLE: invoices
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - quotation_id (INTEGER) NULL
+  - client_id (INTEGER) NULL
+  - date (TEXT) NULL
+  - lpo_number (TEXT) NULL
+  - status (TEXT) NULL DEFAULT 'unpaid'
+  - total_amount (REAL) NULL
+  - discount (REAL) NULL
+  - paid_amount (REAL) NULL
+  - balance (REAL) NULL
+
+TABLE: lpo_approvals
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - lpo_id (INTEGER) NOT NULL
+  - approver_name (TEXT) NOT NULL
+  - approval_level (INTEGER) NULL DEFAULT 1
+  - status (TEXT) NULL DEFAULT 'pending'
+  - approved_at (TEXT) NULL
+  - comments (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: lpo_audit_log
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - lpo_id (INTEGER) NOT NULL
+  - action (TEXT) NOT NULL
+  - performed_by (TEXT) NOT NULL
+  - performed_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - old_values (TEXT) NULL
+  - new_values (TEXT) NULL
+  - notes (TEXT) NULL
+
+TABLE: lpo_items
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - lpo_id (INTEGER) NOT NULL
+  - item_description (TEXT) NOT NULL
+  - quantity (REAL) NOT NULL DEFAULT 1
+  - unit_of_measure (TEXT) NULL DEFAULT 'pcs'
+  - unit_price (REAL) NOT NULL
+  - total_price (REAL) NOT NULL
+  - notes (TEXT) NULL
+
+TABLE: lpo_sequence
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - current_number (INTEGER) NULL DEFAULT 1000
+  - prefix (TEXT) NULL DEFAULT 'LPO'
+  - year (INTEGER) NULL DEFAULT 2025
+
+TABLE: lpos
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - lpo_number (TEXT) NOT NULL
+  - date (TEXT) NOT NULL
+  - supplier_id (INTEGER) NULL
+  - supplier_name (TEXT) NULL
+  - project_id (INTEGER) NULL
+  - department (TEXT) NULL
+  - payment_terms (TEXT) NULL DEFAULT 'Credit'
+  - delivery_date (TEXT) NULL
+  - reference (TEXT) NULL
+  - subtotal (REAL) NULL
+  - tax_amount (REAL) NULL
+  - tax_percentage (REAL) NULL
+  - discount_amount (REAL) NULL
+  - discount_percentage (REAL) NULL
+  - grand_total (REAL) NULL
+  - status (TEXT) NULL DEFAULT 'draft'
+  - created_by (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - approved_by (TEXT) NULL
+  - approved_at (TEXT) NULL
+  - issued_by (TEXT) NULL
+  - issued_at (TEXT) NULL
+  - notes (TEXT) NULL
+  - supplier_acknowledgment (INTEGER) NULL
+  - acknowledgment_date (TEXT) NULL
+
+TABLE: outside_labours
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - trade (TEXT) NULL
+  - daily_rate (REAL) NULL
+
+TABLE: payments
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - invoice_id (INTEGER) NULL
+  - amount (REAL) NULL
+  - date (TEXT) NULL
+  - payment_method (TEXT) NULL
+  - cheque_number (TEXT) NULL
+  - bank_name (TEXT) NULL
+  - notes (TEXT) NULL
+
+TABLE: projects
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - client_id (INTEGER) NULL
+  - total_income (REAL) NULL
+  - total_expenses (REAL) NULL
+  - profit (REAL) NULL
+
+TABLE: purchase_audit_log
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - purchase_id (INTEGER) NOT NULL
+  - action (TEXT) NOT NULL
+  - performed_by (TEXT) NOT NULL
+  - performed_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - old_values (TEXT) NULL
+  - new_values (TEXT) NULL
+  - notes (TEXT) NULL
+
+TABLE: purchase_items
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - purchase_id (INTEGER) NOT NULL
+  - description (TEXT) NOT NULL
+  - quantity (REAL) NULL DEFAULT 1
+  - unit_price (REAL) NULL
+  - total (REAL) NULL
+
+TABLE: purchase_payments
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - purchase_id (INTEGER) NOT NULL
+  - payment_date (TEXT) NOT NULL
+  - amount (REAL) NOT NULL
+  - payment_method (TEXT) NOT NULL
+  - payment_account (TEXT) NULL
+  - cheque_number (TEXT) NULL
+  - bank_name (TEXT) NULL
+  - paid_by (TEXT) NULL
+  - employee_id (INTEGER) NULL
+  - is_reimbursable (INTEGER) NULL
+  - reimbursement_status (TEXT) NULL DEFAULT 'pending'
+  - notes (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: purchases
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - project_id (INTEGER) NOT NULL
+  - vendor_id (INTEGER) NULL
+  - purchase_date (TEXT) NOT NULL
+  - description (TEXT) NULL
+  - invoice_number (TEXT) NULL
+  - attachment_path (TEXT) NULL
+  - subtotal (REAL) NULL
+  - tax_amount (REAL) NULL
+  - total_amount (REAL) NULL
+  - status (TEXT) NULL DEFAULT 'draft'
+  - created_by (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - approved_by (TEXT) NULL
+  - approved_at (TEXT) NULL
+  - rejection_reason (TEXT) NULL
+
+TABLE: quotation_items
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - quotation_id (INTEGER) NULL
+  - description (TEXT) NULL
+  - quantity (REAL) NULL
+  - price (REAL) NULL
+  - total (REAL) NULL
+
+TABLE: quotations
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - client_id (INTEGER) NULL
+  - project_id (INTEGER) NULL
+  - date (TEXT) NULL
+  - status (TEXT) NULL DEFAULT 'pending'
+  - total_amount (REAL) NULL
+
+TABLE: reimbursements
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - purchase_payment_id (INTEGER) NOT NULL
+  - employee_id (INTEGER) NOT NULL
+  - amount (REAL) NOT NULL
+  - request_date (TEXT) NOT NULL
+  - approval_date (TEXT) NULL
+  - payment_date (TEXT) NULL
+  - status (TEXT) NULL DEFAULT 'pending'
+  - approved_by (TEXT) NULL
+  - payment_method (TEXT) NULL
+  - rejection_reason (TEXT) NULL
+  - notes (TEXT) NULL
+
+TABLE: sqlite_sequence
+--------------------------------------------------
+  - name () NULL
+  - seq () NULL
+
+TABLE: tool_assignments
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - tool_id (INTEGER) NOT NULL
+  - employee_id (INTEGER) NOT NULL
+  - assigned_date (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - returned_date (TEXT) NULL
+  - notes (TEXT) NULL
+  - condition_on_issue (TEXT) NULL
+  - condition_on_return (TEXT) NULL
+
+TABLE: tools
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - category (TEXT) NULL
+  - serial_number (TEXT) NULL
+  - purchase_date (TEXT) NULL
+  - supplier (TEXT) NULL
+  - cost (REAL) NULL
+  - warranty_expiry (TEXT) NULL
+  - status (TEXT) NULL DEFAULT 'in_store'
+  - assigned_to (INTEGER) NULL
+  - image_path (TEXT) NULL
+  - notes (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - updated_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: transactions
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - date (TEXT) NULL
+  - description (TEXT) NULL
+  - amount (REAL) NULL
+  - type (TEXT) NULL
+  - source (TEXT) NULL
+  - payment_method (TEXT) NULL
+
+TABLE: units_of_measure
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - unit_code (TEXT) NOT NULL
+  - unit_name (TEXT) NOT NULL
+  - is_active (INTEGER) NULL DEFAULT 1
+
+TABLE: users
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - username (TEXT) NOT NULL
+  - password_hash (TEXT) NOT NULL
+  - role (TEXT) NOT NULL DEFAULT 'employee'
+  - employee_id (INTEGER) NULL
+  - created_at (DATETIME) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: vehicle_alerts
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - vehicle_id (INTEGER) NOT NULL
+  - alert_type (TEXT) NOT NULL
+  - alert_message (TEXT) NOT NULL
+  - due_date (TEXT) NULL
+  - due_km (REAL) NULL
+  - is_active (INTEGER) NULL DEFAULT 1
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - dismissed_at (TEXT) NULL
+
+TABLE: vehicle_daily_logs
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - vehicle_id (INTEGER) NOT NULL
+  - log_date (TEXT) NOT NULL
+  - opening_km (REAL) NOT NULL
+  - closing_km (REAL) NOT NULL
+  - total_km (REAL) NOT NULL
+  - driver_name (TEXT) NULL
+  - route_trip (TEXT) NULL
+  - remarks (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: vehicle_expenses
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - vehicle_id (INTEGER) NOT NULL
+  - expense_date (TEXT) NOT NULL
+  - expense_type (TEXT) NOT NULL
+  - amount (REAL) NOT NULL
+  - vendor_garage (TEXT) NULL
+  - invoice_number (TEXT) NULL
+  - description (TEXT) NULL
+  - attachment_path (TEXT) NULL
+  - odometer_reading (REAL) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - paid_by (TEXT) NULL
+
+TABLE: vehicle_fuel_records
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - vehicle_id (INTEGER) NOT NULL
+  - fuel_date (TEXT) NOT NULL
+  - liters (REAL) NOT NULL
+  - amount (REAL) NOT NULL
+  - price_per_liter (REAL) NOT NULL
+  - odometer_reading (REAL) NOT NULL
+  - driver_name (TEXT) NULL
+  - fuel_station (TEXT) NULL
+  - mileage_km_per_liter (REAL) NULL
+  - previous_odometer (REAL) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - paid_by (TEXT) NULL
+
+TABLE: vehicle_income
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - vehicle_id (INTEGER) NOT NULL
+  - income_date (TEXT) NOT NULL
+  - amount (REAL) NOT NULL
+  - description (TEXT) NULL
+  - project_id (INTEGER) NULL
+  - invoice_number (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+TABLE: vehicle_maintenance
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - vehicle_id (INTEGER) NOT NULL
+  - service_date (TEXT) NOT NULL
+  - service_type (TEXT) NOT NULL
+  - details (TEXT) NULL
+  - km_reading (REAL) NOT NULL
+  - amount (REAL) NULL
+  - next_due_km (REAL) NULL
+  - garage_name (TEXT) NULL
+  - invoice_number (TEXT) NULL
+  - attachment_path (TEXT) NULL
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - paid_by (TEXT) NULL
+
+TABLE: vehicles
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - type (TEXT) NULL
+  - registration (TEXT) NULL
+
+TABLE: vendor_payments
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - vendor_id (INTEGER) NULL
+  - amount (REAL) NULL
+  - date (TEXT) NULL
+  - payment_method (TEXT) NULL
+
+TABLE: vendors
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - name (TEXT) NOT NULL
+  - contact (TEXT) NULL
+  - email (TEXT) NULL
+  - phone (TEXT) NULL
+  - address (TEXT) NULL
+  - total_business (REAL) NULL
+  - total_paid (REAL) NULL
+  - balance (REAL) NULL
+
+TABLE: voucher_entries
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - voucher_id (INTEGER) NOT NULL
+  - account_head (TEXT) NOT NULL
+  - debit_amount (REAL) NULL
+  - credit_amount (REAL) NULL
+  - narration (TEXT) NULL
+
+TABLE: vouchers
+--------------------------------------------------
+  - id (INTEGER) NULL PRIMARY KEY
+  - voucher_no (TEXT) NOT NULL
+  - voucher_date (TEXT) NOT NULL
+  - paid_to_received_from (TEXT) NOT NULL
+  - amount (REAL) NOT NULL
+  - amount_in_words (TEXT) NOT NULL
+  - description (TEXT) NULL
+  - voucher_type (TEXT) NULL DEFAULT 'cash'
+  - prepared_by (TEXT) NULL
+  - checked_by (TEXT) NULL
+  - approved_by (TEXT) NULL
+  - status (TEXT) NULL DEFAULT 'draft'
+  - created_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+  - updated_at (TEXT) NULL DEFAULT CURRENT_TIMESTAMP
+
+
+=== TOTAL TABLES: 46 ===

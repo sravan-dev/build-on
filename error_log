@@ -1,0 +1,173 @@
+[10-Jan-2026 13:11:43 Asia/Qatar] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'buildon_qatar.invoices' doesn't exist in /home/buildon/public_html/pages/dashboard.php:136
+Stack trace:
+#0 /home/buildon/public_html/pages/dashboard.php(136): PDO->query('SELECT COALESCE...')
+#1 /home/buildon/public_html/index.php(799): include('/home/buildon/p...')
+#2 {main}
+  thrown in /home/buildon/public_html/pages/dashboard.php on line 136
+[10-Jan-2026 13:11:56 Asia/Qatar] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'buildon_qatar.invoices' doesn't exist in /home/buildon/public_html/pages/dashboard.php:136
+Stack trace:
+#0 /home/buildon/public_html/pages/dashboard.php(136): PDO->query('SELECT COALESCE...')
+#1 /home/buildon/public_html/index.php(799): include('/home/buildon/p...')
+#2 {main}
+  thrown in /home/buildon/public_html/pages/dashboard.php on line 136
+[10-Jan-2026 13:36:10 Asia/Qatar] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'buildon_qatar.vehicle_income' doesn't exist in /home/buildon/public_html/pages/dashboard.php:139
+Stack trace:
+#0 /home/buildon/public_html/pages/dashboard.php(139): PDO->query('SELECT COALESCE...')
+#1 /home/buildon/public_html/index.php(799): include('/home/buildon/p...')
+#2 {main}
+  thrown in /home/buildon/public_html/pages/dashboard.php on line 139
+[10-Jan-2026 13:36:17 Asia/Qatar] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'buildon_qatar.vehicle_income' doesn't exist in /home/buildon/public_html/pages/dashboard.php:139
+Stack trace:
+#0 /home/buildon/public_html/pages/dashboard.php(139): PDO->query('SELECT COALESCE...')
+#1 /home/buildon/public_html/index.php(799): include('/home/buildon/p...')
+#2 {main}
+  thrown in /home/buildon/public_html/pages/dashboard.php on line 139
+[15-Jan-2026 21:51:52 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Jan-2026 21:54:57 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Jan-2026 21:56:53 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Jan-2026 21:57:35 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[15-Jan-2026 21:57:35 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[15-Jan-2026 21:57:35 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[15-Jan-2026 21:57:35 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[15-Jan-2026 21:57:35 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[15-Jan-2026 21:57:35 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[15-Jan-2026 22:55:12 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Jan-2026 22:55:28 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[17-Jan-2026 10:02:13 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[17-Jan-2026 10:02:13 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[17-Jan-2026 10:02:13 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[17-Jan-2026 10:02:13 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[17-Jan-2026 10:02:13 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[17-Jan-2026 10:02:13 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[17-Jan-2026 23:28:56 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[17-Jan-2026 23:28:56 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[17-Jan-2026 23:28:56 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[17-Jan-2026 23:28:56 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[17-Jan-2026 23:28:56 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[17-Jan-2026 23:28:56 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[17-Jan-2026 23:47:44 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[17-Jan-2026 23:47:44 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[17-Jan-2026 23:47:44 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[17-Jan-2026 23:47:44 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[17-Jan-2026 23:47:44 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[17-Jan-2026 23:47:44 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[20-Jan-2026 13:44:10 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[20-Jan-2026 13:44:10 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[20-Jan-2026 13:44:10 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[20-Jan-2026 13:44:10 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[20-Jan-2026 13:44:10 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[20-Jan-2026 13:44:10 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[26-Jan-2026 08:49:23 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/vendors.php on line 214
+[14-Feb-2026 20:43:15 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[14-Feb-2026 20:43:15 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[14-Feb-2026 20:43:15 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[14-Feb-2026 20:43:15 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[14-Feb-2026 20:43:15 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[14-Feb-2026 20:43:15 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[15-Feb-2026 10:18:04 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 10:55:39 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 11:59:34 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[15-Feb-2026 11:59:34 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[15-Feb-2026 11:59:34 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[15-Feb-2026 11:59:34 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[15-Feb-2026 11:59:34 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[15-Feb-2026 11:59:34 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[15-Feb-2026 14:01:30 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 14:02:31 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 14:05:05 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 14:49:40 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 20:01:24 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 20:02:11 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 20:03:45 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/vendors.php on line 214
+[15-Feb-2026 22:41:04 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 22:41:26 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[15-Feb-2026 22:44:33 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[16-Feb-2026 16:42:47 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[16-Feb-2026 16:50:06 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[16-Feb-2026 17:05:37 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[20-Feb-2026 14:38:41 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[20-Feb-2026 14:51:02 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[20-Feb-2026 14:52:19 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[20-Feb-2026 14:53:30 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[20-Feb-2026 23:06:21 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/vendors.php on line 214
+[20-Feb-2026 23:06:36 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/vendors.php on line 214
+[21-Feb-2026 22:24:45 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[21-Feb-2026 22:25:16 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[21-Feb-2026 22:26:07 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[21-Feb-2026 22:28:26 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[21-Feb-2026 22:28:57 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[21-Feb-2026 22:34:56 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[21-Feb-2026 22:34:56 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[21-Feb-2026 22:34:56 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[21-Feb-2026 22:34:56 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[21-Feb-2026 22:34:56 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[21-Feb-2026 22:34:56 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[21-Feb-2026 22:53:39 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[22-Feb-2026 13:30:02 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[02-Mar-2026 21:11:45 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[02-Mar-2026 21:11:45 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[02-Mar-2026 21:11:45 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[02-Mar-2026 21:11:45 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[02-Mar-2026 21:11:45 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[02-Mar-2026 21:11:45 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[02-Mar-2026 21:32:42 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[02-Mar-2026 21:32:42 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[02-Mar-2026 21:32:42 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[02-Mar-2026 21:32:42 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[02-Mar-2026 21:32:42 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[02-Mar-2026 21:32:42 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[02-Mar-2026 21:42:53 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[02-Mar-2026 21:42:53 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[02-Mar-2026 21:42:53 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[02-Mar-2026 21:42:53 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[02-Mar-2026 21:42:53 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[02-Mar-2026 21:42:53 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[02-Mar-2026 21:44:56 Asia/Qatar] PHP Warning:  Undefined array key "invoice_id" in /home/buildon/public_html/pages/payments.php on line 104
+[02-Mar-2026 21:44:56 Asia/Qatar] PHP Warning:  Undefined array key "invoice_id" in /home/buildon/public_html/pages/payments.php on line 116
+[02-Mar-2026 21:44:56 Asia/Qatar] PHP Warning:  Undefined array key "invoice_id" in /home/buildon/public_html/pages/payments.php on line 119
+[02-Mar-2026 21:53:26 Asia/Qatar] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1615 Prepared statement needs to be re-prepared in /home/buildon/public_html/pages/projects.php:28
+Stack trace:
+#0 /home/buildon/public_html/pages/projects.php(28): PDOStatement->execute(Array)
+#1 /home/buildon/public_html/index.php(929): include('/home/buildon/p...')
+#2 {main}
+  thrown in /home/buildon/public_html/pages/projects.php on line 28
+[02-Mar-2026 21:53:31 Asia/Qatar] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1615 Prepared statement needs to be re-prepared in /home/buildon/public_html/pages/projects.php:28
+Stack trace:
+#0 /home/buildon/public_html/pages/projects.php(28): PDOStatement->execute(Array)
+#1 /home/buildon/public_html/index.php(929): include('/home/buildon/p...')
+#2 {main}
+  thrown in /home/buildon/public_html/pages/projects.php on line 28
+[04-Mar-2026 12:48:45 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[04-Mar-2026 12:49:14 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:06:56 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:07:13 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:13:05 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:14:55 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:20:06 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:20:38 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:20:57 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:24:47 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:26:25 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:27:53 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[06-Mar-2026 17:30:30 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[11-Mar-2026 13:17:40 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[11-Mar-2026 13:17:40 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[11-Mar-2026 13:17:40 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[11-Mar-2026 13:17:40 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[11-Mar-2026 13:17:40 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[11-Mar-2026 13:17:40 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[11-Mar-2026 13:19:17 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[11-Mar-2026 13:19:17 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[11-Mar-2026 13:19:17 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[11-Mar-2026 13:19:17 Asia/Qatar] PHP Deprecated:  strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 198
+[11-Mar-2026 13:19:17 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 203
+[11-Mar-2026 13:19:17 Asia/Qatar] PHP Deprecated:  ucfirst(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/ledger.php on line 235
+[14-Mar-2026 12:54:57 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/voucher_view.php on line 181
+[25-Mar-2026 20:23:40 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/vendors.php on line 214
+[10-Apr-2026 19:27:13 Asia/Qatar] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/buildon/public_html/pages/vendors.php on line 214
+[25-Aug-2026 17:36:23 Asia/Qatar] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'va.alert_date' in 'ORDER BY' in /home/buildon/public_html/pages/vehicle_alerts.php:10
+Stack trace:
+#0 /home/buildon/public_html/pages/vehicle_alerts.php(10): PDO->query('\r\n    SELECT \r\n...')
+#1 /home/buildon/public_html/index.php(929): include('/home/buildon/p...')
+#2 {main}
+  thrown in /home/buildon/public_html/pages/vehicle_alerts.php on line 10

@@ -1,0 +1,111 @@
+Project: Buildon Accounts
+Date Summarized: 2025-09-16
+
+Overview:
+Buildon Accounts is a lightweight, single-user (session flag) web-based construction/business accounting and project management dashboard built with plain PHP, SQLite, Tailwind CSS (via CDN), Font Awesome, and Chart.js. It centralizes clients, vendors, projects, quotations, invoices, payments, payroll/attendance, outside labour, vehicles, general ledger style transactions, cash/bank book, and basic settings into a unified interface navigated from a sidebar.
+
+Architecture & Stack:
+- Runtime: PHP (no framework) with procedural page scripts.
+- Persistence: Single SQLite database file `buildon.sqlite` with schema defined in `database/schema.sql` and initialized via `database/init.php`.
+- Data Access: Direct PDO usage (no abstraction layer); each page includes `includes/db.php` to open a shared `$pdo` connection (error mode EXCEPTION).
+- Environment Management: Custom `.env` loader (`includes/functions.php`) allowing configurable credentials and flags (e.g., LOGIN_USERNAME, LOGIN_PASSWORD, ENABLE_QUICK_LOGIN, CURRENCY_SYMBOL).
+- UI: Tailwind CSS CDN + minimal custom color utility classes; Font Awesome icons; Chart.js for dashboard charts.
+- Routing: Front controller `index.php` that switches content based on `?page=` parameter and includes `pages/{page}.php`. Fallback defaults to `dashboard` if file missing.
+- Session/Auth: Extremely simple—session variable `$_SESSION['logged_in']` set after credential match or quick login; no user roles, hashing, CSRF tokens, or granular permission system.
+
+Key Directories & Files:
+- /index.php: Session gate, basic login form inclusion, dynamic page loader.
+- /includes/db.php: Opens PDO SQLite connection.
+- /includes/functions.php: Env loader, env update helper, boolean flag parser, currency symbol helper.
+- /includes/header.php & footer.php: HTML shell and asset includes.
+- /includes/nav.php: Left sidebar navigation highlighting active page.
+- /database/schema.sql: Complete schema (19 tables) covering operational and accounting domains.
+- /pages/*.php: Each feature implemented as a self-contained CRUD page (clients, vendors, projects, quotations, invoices, payments, payroll, attendance, labours, vehicles, ledger, cashbook, settings, etc.).
+- /uploads/: Placeholder for uploaded assets (e.g., company logo).
+
+Core Features (Implemented Patterns Observed):
+1. Dashboard KPIs: Aggregated sums (payments, clients count, expenses, sales) plus sample line and pie charts.
+2. Clients & Vendors: Create, update, delete with financial summary fields (totals & balances) stored denormalized.
+3. Projects: Linked to clients; tracks income, expenses, and profit fields (values stored rather than dynamically computed).
+4. Quotations & Items: Quotations have status (pending/approved) and itemized lines in `quotation_items` enabling estimates leading to invoices.
+5. Invoices: Generated from quotations; track status (unpaid, partially_paid, paid), amounts, paid_amount, balance. UI offers auto-fill from selected quotation.
+6. Payments: Applied to invoices (basic sum aggregation used on dashboard). Payment methods tracked (cash/bank) for chart distribution.
+7. Vendor Payments: Separate table to record outgoing payments to vendors.
+8. Expenses: Project-level expense tracking with payment method.
+9. Payroll & Employees: Employees have multiple compensation modes (monthly, per-day, per-hour) plus advances/deductions fields.
+10. Attendance: Calculates total earnings from working days and overtime hours using per-day and per-hour rates of employees.
+11. Outside Labour: Separate table for external trades/daily rates.
+12. Vehicles: Basic asset registry (name, type, registration).
+13. Transactions / General Ledger: Generic transaction recording (income/expense, source, payment_method) for unified financial view.
+14. Account Balances: Stores current balances for different account types (bank, savings, credit) – likely used by cashbook view.
+15. Cash & Bank Book: (Inferred) Summarizes liquidity movements referencing payments and account balances.
+16. Settings: (Inferred) Likely updates .env (e.g., currency symbol) via updateEnv helper.
+
+Database Entities (from schema.sql):
+- clients, vendors, projects, quotations, quotation_items, invoices, payments, employees, attendance,
+  outside_labours, vehicles, transactions, account_balances, expenses, vendor_payments.
+
+Common Implementation Pattern:
+- Each page begins with include of `includes/db.php`.
+- Handles POST (add/update) followed by optional GET ?delete action.
+- Uses prepared statements for writes; some read queries interpolate variables directly (potential SQL injection risk when not parameterized—see attendance employee lookup using concatenation).
+- Fetches full dataset and renders HTML table with Tailwind classes.
+- Provides modal or inline form for add/edit toggling with lightweight JavaScript (no framework) manipulating element classes.
+
+Security Considerations / Gaps:
+- Plain-text credentials in .env; no password hashing.
+- No input validation or sanitization aside from limited `htmlspecialchars` during output; risk for XSS if any field omitted escaping or for SQL injection where direct string interpolation occurs.
+- No CSRF protection on forms (all POSTs unauthenticated beyond session; predictable endpoints).
+- No authorization layers or multi-user roles.
+- Lacks prepared statements in some read queries using user-supplied values.
+- Sessions lack regeneration on login and no logout invalidation details examined (logout page exists).
+
+Performance & Scalability:
+- Suitable for small datasets (SQLite, full table scans, no pagination).
+- All pages load entire table result sets; will degrade with growth.
+- No background processing or batching; synchronous request/response cycle.
+
+Extensibility Opportunities:
+- Add role-based users & permission matrix.
+- Implement proper authentication (hashed passwords, session regeneration, logout hardening).
+- Introduce CSRF tokens and input validation layer.
+- Refactor recurring CRUD boilerplate into reusable functions or a minimal micro-framework structure.
+- Add pagination, searching, and filtering to large tables.
+- Enforce relational integrity with ON DELETE/UPDATE constraints where appropriate.
+- Implement calculation triggers or derived views instead of storing denormalized totals (reduce inconsistency risk).
+- Add audit logging for financial changes.
+- Provide export (CSV/PDF) for invoices, quotations, ledger.
+- Implement reactive charts using aggregated queries per timeframe.
+- Add API layer (REST or JSON endpoints) for integration.
+- Introduce unit tests (none present besides placeholder in /tests) and validation tests.
+- Containerize (Dockerfile) and environment bootstrap script.
+
+Notable Utilities:
+- loadEnv: Robust parsing with comment skipping, quoted value handling, newline decoding, and no override of existing env.
+- updateEnv: In-place key modification with automatic reload.
+- envEnabled: Normalizes boolean-like flags (supports yes/on/true/1).
+- currency_symbol: Fallback default logic for currency display.
+
+UI/UX Characteristics:
+- Consistent Tailwind utility styling; primary/secondary custom brand palette (#f07d00 / #f7a600).
+- Sidebar navigation with active highlighting.
+- Modal-based edit forms for update workflows.
+- Minimal JavaScript focused on DOM toggling and Chart.js instantiation.
+
+Limitations / Risks:
+- Single user session design; not multi-tenant.
+- Manual integrity updates required to keep aggregate fields (e.g., total_invoice, profit) in sync.
+- Potential data races if accessed concurrently (SQLite locking semantics) though unlikely in small deployment.
+- Lack of schema migrations (single static schema file vs evolutions).
+
+Quick Start (Inferred):
+1. Place repo on PHP-enabled host.
+2. (Optional) Create `.env` with LOGIN_USERNAME, LOGIN_PASSWORD.
+3. Run `php database/init.php` once to create tables (if DB file absent).
+4. Browse to `index.php`, log in, begin data entry.
+
+Testing:
+- Only a `tests/test_all.php` placeholder (not reviewed in detail) — no automated assertions for business rules.
+
+Overall Assessment:
+Buildon Accounts is an MVP-style, monolithic PHP/SQLite application emphasizing simplicity and directness over layered architecture. It delivers a broad accounting and operational feature surface quickly but would benefit from systematic security, validation, and structural refactoring before production-scale use.

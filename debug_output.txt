@@ -1,0 +1,29 @@
+=== ALL EXCELLENCE TOWER RECORDS ===
+
+ID: 8
+  Date: 2025-12-13
+  Employee: VINOTHARAJAH THAVARAJAH (ID: 16)
+  Work Site: EXCELLENCE TOWER FLOOR 502
+  In Time: 19:41:02
+  Out Time: 20:15:17
+  Working Hours (stored): 
+  Monthly Salary: 1300.00
+  Hourly Rate: 6.25
+  Labour Cost (from working_hours): 0
+
+ID: 10
+  Date: 2025-12-11
+  Employee: VINOTHARAJAH THAVARAJAH (ID: 16)
+  Work Site: EXCELLENCE TOWER FLOOR 502
+  In Time: 07:30:00
+  Out Time: 05:30:00
+  Working Hours (stored): -2.00
+  Monthly Salary: 1300.00
+  Hourly Rate: 6.25
+  Labour Cost (from working_hours): 0
+
+
+=== TOTAL LABOUR COST (using working_hours): 0 ===
+
+=== PROPOSED NEW SQL APPROACH ===
+Project: EXCELLENCE TOWER FLOOR 502, Labour Cost (NEW): 0.000000000000

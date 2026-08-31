@@ -1,0 +1,38 @@
+# Environment / secrets — generated on first run by sql/db.js, never committed
+.env
+.env.*
+!.env.example
+sql/db.config.json
+
+# Local backups produced while editing
+*.bak
+*.bak2
+*.original.md
+
+# Logs and debug output
+*.log
+server.log
+global_debug_post.log
+purchase_payment_error.log
+subcontract_error.log
+gl_voucher_error.log
+
+# Local SQLite fallback database
+*.sqlite
+
+# Uploads (customer logos, attachments)
+uploads/*
+!uploads/.gitkeep
+!uploads/company_logo.png
+!uploads/company_logo_full.png
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+
+# Build artifacts and tooling session dumps
+buildon-dev.zip
+*.zip
+.playwright-mcp/
