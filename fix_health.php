@@ -9,7 +9,11 @@
  *
  * ACCESS: signed in as superadmin/admin, or with a token. To use the token,
  * create a file named .health-token next to this script containing a long
- * random string, then open fix_health.php?token=<that string>.
+ * random string; opening the page then shows a form to paste it into.
+ *
+ * The token is never accepted from the query string — a URL parameter ends up
+ * in access logs, browser history and Referer headers. It travels by POST, or
+ * in an X-Health-Token header for scripted checks.
  *
  * Delete this file when the site is healthy.
  */
@@ -23,24 +27,66 @@ const HEALTH_TOKEN_PATH = __DIR__ . '/.health-token';
 
 // ------------------------------------------------------------------ access
 
+// Keep the token out of Referer headers on any outbound link.
+header('Referrer-Policy: no-referrer');
+
 $role = $_SESSION['role'] ?? '';
 $signedIn = !empty($_SESSION['logged_in']) && in_array($role, ['superadmin', 'admin'], true);
 
+// POST or header only. A token in the query string is written to the access
+// log, kept in browser history, and leaked through Referer.
+$token = trim((string) ($_POST['token'] ?? $_SERVER['HTTP_X_HEALTH_TOKEN'] ?? ''));
+$tokenFilePresent = is_readable(HEALTH_TOKEN_PATH);
+
 $tokenOk = false;
-if (!$signedIn && is_readable(HEALTH_TOKEN_PATH)) {
+if (!$signedIn && $tokenFilePresent && $token !== '') {
     $expected = trim((string) file_get_contents(HEALTH_TOKEN_PATH));
-    $supplied = trim((string) ($_GET['token'] ?? $_POST['token'] ?? ''));
-    $tokenOk = $expected !== '' && hash_equals($expected, $supplied);
+    $tokenOk = $expected !== '' && hash_equals($expected, $token);
 }
 
 if (!$signedIn && !$tokenOk) {
     usleep(250000);
     http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
-    exit("Forbidden. Sign in as an administrator, or create .health-token beside this file and pass ?token=\n");
+
+    if (!$tokenFilePresent) {
+        header('Content-Type: text/plain; charset=utf-8');
+        exit("Forbidden. Sign in as an administrator, or create .health-token beside this file.\n");
+    }
+
+    // The token file exists, so offer a form to submit it — never a URL parameter.
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!doctype html><meta charset="utf-8"><title>Health check</title>'
+        . '<style>body{font:14px/1.6 system-ui,sans-serif;max-width:420px;margin:80px auto;padding:0 16px;color:#333}'
+        . 'input{width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:6px;font:inherit}'
+        . 'button{margin-top:14px;padding:9px 16px;border:0;border-radius:6px;background:#ea580c;color:#fff;font:inherit;cursor:pointer}</style>'
+        . '<h1 style="font-size:19px">Health check</h1>'
+        . ($token !== '' ? '<p style="color:#b91c1c">That token was not accepted.</p>' : '')
+        . '<form method="post"><label for="t">Setup token</label>'
+        . '<input id="t" name="token" type="password" autocomplete="off" autofocus>'
+        . '<button type="submit">Continue</button></form>';
+    exit;
 }
 
-$token = trim((string) ($_GET['token'] ?? $_POST['token'] ?? ''));
+// State-changing actions from a signed-in admin need a CSRF token; the
+// token-authenticated path is already protected by the secret itself.
+if ($signedIn && empty($_SESSION['health_csrf'])) {
+    $_SESSION['health_csrf'] = bin2hex(random_bytes(32));
+}
+$csrf = (string) ($_SESSION['health_csrf'] ?? '');
+
+function csrf_ok(): bool
+{
+    global $signedIn, $csrf;
+    if (!$signedIn) {
+        return true; // token path: knowing the token is the proof
+    }
+    return $csrf !== '' && hash_equals($csrf, (string) ($_POST['csrf'] ?? ''));
+}
+
+$csrfFailed = false;
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && !csrf_ok()) {
+    $csrfFailed = true;
+}
 
 // ------------------------------------------------------------------ helpers
 
@@ -230,7 +276,7 @@ if ($pdo) {
 $applied = [];
 $applyErrors = [];
 
-if ($pdo && isset($_POST['apply_schema'])) {
+if ($pdo && isset($_POST['apply_schema']) && !$csrfFailed) {
     foreach ($missing as $item) {
         foreach ($item['fix'] as $sql) {
             try {
@@ -267,7 +313,7 @@ if ($pdo && isset($_POST['apply_schema'])) {
 
 $probe = null;
 $probePage = preg_replace('/[^a-z0-9_]/i', '', (string) ($_POST['probe_page'] ?? ''));
-if ($pdo && $probePage !== '') {
+if ($pdo && $probePage !== '' && !$csrfFailed) {
     $probe = probe_page($pdo, $probePage);
 }
 
@@ -296,6 +342,10 @@ $failing = array_filter($checks, static fn($c) => !$c['ok'] && $c['severity'] ==
   .muted { color: #6b7280; font-size: 13px; }
 </style>
 
+<?php if ($csrfFailed): ?>
+  <div class="card bad" style="margin-bottom:16px"><strong>Request ignored</strong>
+    <p>The form token did not match, so nothing was changed. Reload this page and try again.</p></div>
+<?php endif; ?>
 <h1>Buildon Accounts — health check</h1>
 <p class="sub">Signed in as <?php echo h($signedIn ? ($_SESSION['username'] ?? 'admin') . ' (' . $role . ')' : 'token holder'); ?></p>
 
@@ -323,6 +373,7 @@ $failing = array_filter($checks, static fn($c) => !$c['ok'] && $c['severity'] ==
      Applying them is safe and idempotent — existing data is preserved.</p>
   <form method="post">
     <input type="hidden" name="token" value="<?php echo h($token); ?>">
+    <input type="hidden" name="csrf" value="<?php echo h($csrf); ?>">
     <button type="submit" name="apply_schema" value="1">Apply <?php echo count($missing); ?> migration(s)</button>
   </form>
 <?php elseif ($pdo): ?>
@@ -334,6 +385,7 @@ $failing = array_filter($checks, static fn($c) => !$c['ok'] && $c['severity'] ==
    becomes a readable message instead of a white screen.</p>
 <form method="post">
   <input type="hidden" name="token" value="<?php echo h($token); ?>">
+  <input type="hidden" name="csrf" value="<?php echo h($csrf); ?>">
   <select name="probe_page">
     <?php foreach (['dashboard', 'invoices', 'quotations', 'projects', 'purchases', 'payroll', 'clients', 'vendors'] as $p): ?>
       <option value="<?php echo h($p); ?>" <?php echo $p === $probePage ? 'selected' : ''; ?>><?php echo h($p); ?></option>
