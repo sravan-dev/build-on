@@ -74,7 +74,7 @@ run yet, newest work last:
 
 ## Security notes
 
-- `fix_health.php` is a diagnostic, not a permanent endpoint — delete it once
+- `/health` is a diagnostic, not a permanent endpoint — delete it once
   the site is healthy. It requires a superadmin/admin session, or a token in
   `.health-token` submitted through its form (never a URL parameter, which
   would land in access logs and browser history). Repairs are CSRF-protected.

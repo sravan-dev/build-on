@@ -47,3 +47,12 @@
 # Directory listings.
 Options -Indexes
 # --- END hardening ---------------------------------------------------------
+
+# --- BEGIN pretty URLs ------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # /health -> health.php (diagnostics). Kept short so it is easy to type.
+    RewriteRule ^health/?$ health.php [L]
+</IfModule>
+# --- END pretty URLs --------------------------------------------------------

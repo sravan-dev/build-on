@@ -2,7 +2,7 @@
 /**
  * Health check and schema repair.
  *
- *   https://login.buildonqatar.com/fix_health.php
+ *   https://login.buildonqatar.com/health
  *
  * Diagnoses white screens (a fatal inside a page include shows nothing when
  * display_errors is off) and applies the schema migrations this codebase needs.
@@ -454,5 +454,5 @@ if (isset($_POST['show_log']) && !$csrfFailed) {
 ?>
 
 <p class="muted" style="margin-top:32px">
-  Delete <code>fix_health.php</code> (and <code>.health-token</code>) once the site is healthy.
+  Delete <code>health.php</code> (and <code>.health-token</code>) once the site is healthy.
 </p>

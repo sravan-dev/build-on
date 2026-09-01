@@ -16,8 +16,9 @@ deployment:
     - /bin/cp -f ./.htaccess $DEPLOYPATH/.htaccess
     - /bin/cp -f ./.env.example $DEPLOYPATH/.env.example
 
-    # Never deploy the repository metadata or this file.
-    - /bin/rm -rf $DEPLOYPATH/.git $DEPLOYPATH/.cpanel.yml
+    # Never deploy the repository metadata or this file. fix_health.php was
+    # renamed to health.php, so remove any copy left by an earlier deploy.
+    - /bin/rm -rf $DEPLOYPATH/.git $DEPLOYPATH/.cpanel.yml $DEPLOYPATH/fix_health.php
 
     # .env is deliberately NOT deployed: it holds the live credentials and is
     # created once by sql/db.php, then left alone by every later deploy.

@@ -101,7 +101,7 @@ try {
         echo '<p><code>.env</code> is present but the connection was refused. Check the '
             . '<code>PROD_DB_*</code> settings and that <code>APP_ENV=production</code>.</p>';
     }
-    echo '<p>Run <code>fix_health.php</code> for a full diagnosis. The exact error is in the PHP error log.</p>';
+    echo '<p>Run <code>/health</code> for a full diagnosis. The exact error is in the PHP error log.</p>';
     echo '</div>';
     exit;
 }
