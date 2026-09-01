@@ -54,5 +54,12 @@ Options -Indexes
 
     # /health -> health.php (diagnostics). Kept short so it is easy to type.
     RewriteRule ^health/?$ health.php [L]
+
+    # Block whole directories that FilesMatch cannot reach. This matters when the
+    # git clone IS the document root: without it, /.git/config and the rest of the
+    # history are downloadable, which hands over the entire source tree.
+    RewriteRule ^\.git(/|$) - [F,L]
+    RewriteRule ^\.github(/|$) - [F,L]
+    RewriteRule (^|/)\.env(\.|$) - [F,L]
 </IfModule>
 # --- END pretty URLs --------------------------------------------------------
