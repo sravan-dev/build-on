@@ -1,0 +1,24 @@
+---
+deployment:
+  tasks:
+    # $HOME is the cPanel account home, so no username is hardcoded.
+    # Change public_html below if this site is an addon/subdomain document root,
+    # e.g. $HOME/buildonqatar.com or $HOME/public_html/accounts
+    - export DEPLOYPATH=$HOME/public_html
+    - /bin/mkdir -p $DEPLOYPATH
+
+    # Application files. `./*` does not match dotfiles, so the ones that matter
+    # are copied explicitly below; hidden files *inside* directories (sql/.htaccess)
+    # are carried by the recursive copy.
+    - /bin/cp -R ./* $DEPLOYPATH/
+
+    # Apache rules that block .env, database dumps, backups and logs.
+    - /bin/cp -f ./.htaccess $DEPLOYPATH/.htaccess
+    - /bin/cp -f ./.env.example $DEPLOYPATH/.env.example
+
+    # Never deploy the repository metadata or this file.
+    - /bin/rm -rf $DEPLOYPATH/.git $DEPLOYPATH/.cpanel.yml
+
+    # .env is deliberately NOT deployed: it holds the live credentials and is
+    # created once by sql/db.php, then left alone by every later deploy.
+    - /bin/chmod 640 $DEPLOYPATH/.htaccess $DEPLOYPATH/sql/.htaccess
