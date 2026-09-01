@@ -37,3 +37,4 @@ buildon-dev.zip
 *.zip
 .playwright-mcp/
 sql/.installed
+sql/.setup-token

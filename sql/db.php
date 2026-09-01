@@ -12,7 +12,16 @@
  * Run it either way:
  *
  *   CLI      php sql/db.php
- *   Browser  https://your-site/sql/db.php     (shows a short form)
+ *   Browser  https://your-site/sql/db.php?token=<setup token>
+ *
+ * A browser run is refused unless sql/.setup-token exists and its contents match
+ * the supplied token. Generate one before uploading:
+ *
+ *   php sql/db.php --make-token        (prints the token and writes the file)
+ *
+ * Without that gate anyone who reached this URL before you did could point the
+ * application at a database of their own, so the token is mandatory over HTTP.
+ * The token file is deleted once setup succeeds.
  *
  * Credentials come from, in order of precedence:
  *   1. the browser form / environment variables,
@@ -34,6 +43,7 @@ const ENV_PATH = ROOT_DIR . '/.env';
 const SQL_PATH = __DIR__ . '/buildon_qatar.sql';
 const CONFIG_PATH = __DIR__ . '/db.config.json';
 const LOCK_PATH = __DIR__ . '/.installed';
+const TOKEN_PATH = __DIR__ . '/.setup-token';
 
 $IS_CLI = (PHP_SAPI === 'cli');
 
@@ -345,6 +355,10 @@ function render_form(array $config, ?string $notice = null): void
     echo '<p>Enter the database this site should use. The values are written to '
         . '<code>.env</code>; the dump is imported only if the database is empty.</p>';
     echo '<form method="post">';
+    $token = (string) ($_GET['token'] ?? $_POST['token'] ?? '');
+    if ($token !== '') {
+        echo '<input type="hidden" name="token" value="' . htmlspecialchars($token) . '">';
+    }
     foreach ([
         'PROD_DB_HOST' => 'Database host',
         'PROD_DB_PORT' => 'Port',
@@ -360,11 +374,79 @@ function render_form(array $config, ?string $notice = null): void
     echo '<button type="submit" name="install" value="1">Install</button></form>';
 }
 
+/** Disarm the web installer. Called on every completed browser run. */
+function disarm(string $why): void
+{
+    @file_put_contents(LOCK_PATH, date('c') . ' ' . $why . "\n");
+    @unlink(TOKEN_PATH);
+}
+
+/** Refuse the request with a status code and a bare message. */
+function deny(int $status, string $message): void
+{
+    http_response_code($status);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit($message . "\n");
+}
+
+/**
+ * A browser run must present the setup token. Without this an attacker who
+ * reaches the URL before the deployer does could install the application
+ * against a database of their own and take over the site.
+ */
+function require_setup_token(): void
+{
+    if (!is_readable(TOKEN_PATH)) {
+        deny(403, 'Setup is not armed. Run "php sql/db.php --make-token" (or create sql/.setup-token '
+            . 'containing a random string) before using the web installer.');
+    }
+
+    $expected = trim((string) file_get_contents(TOKEN_PATH));
+    $supplied = (string) ($_POST['token'] ?? $_GET['token'] ?? $_SERVER['HTTP_X_SETUP_TOKEN'] ?? '');
+
+    if ($expected === '' || !hash_equals($expected, trim($supplied))) {
+        // Slow down blind guessing a little without hanging the worker.
+        usleep(250000);
+        deny(403, 'Forbidden.');
+    }
+}
+
+function make_token(): void
+{
+    $token = bin2hex(random_bytes(24));
+    if (@file_put_contents(TOKEN_PATH, $token . "\n") === false) {
+        fwrite(STDERR, "Could not write " . TOKEN_PATH . "\n");
+        exit(1);
+    }
+    @chmod(TOKEN_PATH, 0600);
+    echo "\nSetup token written to sql/.setup-token\n\n  " . $token . "\n\n"
+        . "Open:  https://your-site/sql/db.php?token=" . $token . "\n\n"
+        . "It is deleted automatically once setup completes.\n\n";
+    exit(0);
+}
+
 // ---------------------------------------------------------------- entry point
 
-if (!$IS_CLI && file_exists(LOCK_PATH)) {
-    http_response_code(403);
-    exit('Setup has already been completed. Delete sql/db.php from the server.');
+if ($IS_CLI && in_array('--make-token', $argv ?? [], true)) {
+    make_token();
+}
+
+if (!$IS_CLI) {
+    // 1. Already installed — stay disarmed.
+    if (file_exists(LOCK_PATH)) {
+        deny(403, 'Setup has already been completed. Delete sql/db.php from the server.');
+    }
+
+    // 2. Every browser run must carry the setup token.
+    require_setup_token();
+
+    // 3. A configured application is not reinstallable over HTTP: if .env is
+    //    already present the site is live, so disarm instead of touching it.
+    if (file_exists(ENV_PATH)) {
+        disarm('env-present');
+        deny(403, 'This site is already configured (.env exists). The installer has been disabled; '
+            . 'delete sql/db.php from the server.');
+    }
 }
 
 $config = load_config();
@@ -383,7 +465,12 @@ write_env($config);
 ensure_database($config);
 $imported = import_dump($config);
 
-if ($imported) {
+if (!$IS_CLI) {
+    // Self-disarm on any completed browser run, imported or not, so the
+    // endpoint is never left live waiting for a second visitor.
+    disarm($imported ? 'installed' : 'completed');
+    step('wrote sql/.installed and removed the setup token — the web installer is now disabled');
+} elseif ($imported) {
     @file_put_contents(LOCK_PATH, date('c') . " installed\n");
     step('wrote sql/.installed — the web installer is now disabled');
 }
