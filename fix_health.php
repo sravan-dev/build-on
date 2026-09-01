@@ -103,6 +103,19 @@ function h($v): string
     return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 }
 
+/** Strip anything that looks like a credential out of text before showing it. */
+function redact(string $text): string
+{
+    $patterns = [
+        '/(PASS(?:WORD)?\s*[=:]\s*)\S+/i',
+        '/(password\s*=>\s*)\S+/i',
+        '/(:\/\/[^:\/\s]+:)[^@\s]+(@)/',   // scheme://user:secret@host
+        '/(TOKEN\s*[=:]\s*)\S+/i',
+        '/(SECRET\s*[=:]\s*)\S+/i',
+    ];
+    return (string) preg_replace($patterns, '$1[redacted]$2', $text);
+}
+
 /** The schema this codebase expects, with the statement that repairs each gap. */
 function required_schema(): array
 {
@@ -355,7 +368,7 @@ $failing = array_filter($checks, static fn($c) => !$c['ok'] && $c['severity'] ==
       <td class="state <?php echo $c['ok'] ? 'ok' : ($c['severity'] === 'warn' ? 'warn' : 'bad'); ?>">
         <?php echo $c['ok'] ? '✓' : ($c['severity'] === 'warn' ? '!' : '✗'); ?>
       </td>
-      <td><strong><?php echo h($c['label']); ?></strong><br><span class="muted"><?php echo h($c['detail']); ?></span></td>
+      <td><strong><?php echo h($c['label']); ?></strong><br><span class="muted"><?php echo h(redact($c['detail'])); ?></span></td>
     </tr>
   <?php endforeach; ?>
 </table>
@@ -397,7 +410,7 @@ $failing = array_filter($checks, static fn($c) => !$c['ok'] && $c['severity'] ==
 <?php if ($probe !== null): ?>
   <div class="card <?php echo $probe['ok'] ? 'good' : 'bad'; ?>">
     <strong><?php echo h($probePage); ?>:</strong>
-    <pre><?php echo h($probe['message']); ?></pre>
+    <pre><?php echo h(redact($probe['message'])); ?></pre>
   </div>
 <?php endif; ?>
 
@@ -411,16 +424,31 @@ echo 'APP_ENV         ' . h($appEnv) . "\n";
 echo 'Database        ' . h($dbName) . ' @ ' . h($dbHost) . "\n";
 ?></pre>
 
+<h2>Error log</h2>
+<p class="muted">Log lines can contain credentials from stack traces, so they are
+   shown only on request and passed through a redactor first.</p>
+<form method="post">
+  <input type="hidden" name="token" value="<?php echo h($token); ?>">
+  <input type="hidden" name="csrf" value="<?php echo h($csrf); ?>">
+  <button type="submit" class="secondary" name="show_log" value="1">Show last 25 lines</button>
+</form>
 <?php
-$logCandidates = [__DIR__ . '/error_log', __DIR__ . '/php_errorlog', ini_get('error_log')];
-foreach ($logCandidates as $log) {
-    if ($log && is_readable($log) && is_file($log)) {
-        $lines = @file($log);
-        if ($lines) {
-            echo '<h2>Last lines of ' . h($log) . '</h2><pre>'
-                . h(implode('', array_slice($lines, -25))) . '</pre>';
+if (isset($_POST['show_log']) && !$csrfFailed) {
+    $logCandidates = [__DIR__ . '/error_log', __DIR__ . '/php_errorlog', ini_get('error_log')];
+    $shown = false;
+    foreach ($logCandidates as $log) {
+        if ($log && is_readable($log) && is_file($log)) {
+            $lines = @file($log);
+            if ($lines) {
+                echo '<h3 style="font-size:14px">' . h($log) . '</h3><pre>'
+                    . h(redact(implode('', array_slice($lines, -25)))) . '</pre>';
+                $shown = true;
+            }
+            break;
         }
-        break;
+    }
+    if (!$shown) {
+        echo '<p class="muted">No readable error log found at the usual paths.</p>';
     }
 }
 ?>
