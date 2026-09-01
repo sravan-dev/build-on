@@ -1,0 +1,25 @@
+# Nothing in this directory may be fetched over HTTP except the installer.
+#
+# Without this, /sql/buildon_qatar.sql hands any visitor the entire database and
+# /sql/db.config.json hands them the production password.
+
+<IfModule mod_authz_core.c>
+    # Apache 2.4
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    # Apache 2.2
+    Order deny,allow
+    Deny from all
+</IfModule>
+
+# The installer itself stays reachable; it is token-gated and self-disarming.
+<Files "db.php">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</Files>

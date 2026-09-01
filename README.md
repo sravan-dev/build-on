@@ -74,6 +74,17 @@ run yet, newest work last:
 
 ## Security notes
 
+- `.htaccess` in the repository root and in `sql/` blocks dotfiles, `*.sql`,
+  `*.bak`, `*.log`, `*.sqlite`, `*.zip` and `*.config.json`, and turns off
+  directory listings. **These rules are Apache-specific.** On nginx or Caddy you
+  must add the equivalent denies yourself — otherwise `/.env`,
+  `/sql/db.config.json` and `/sql/buildon_qatar.sql` are downloadable by anyone.
+  Verify after deploying:
+
+      curl -i https://your-site/.env                    # must be 403
+      curl -i https://your-site/sql/buildon_qatar.sql   # must be 403
+
+
 - `ENABLE_QUICK_LOGIN` must be `false` in production. When it is on, a bare POST
   of `quick_login=1` grants a superadmin session with no credentials. The
   installer writes `false` into every `.env` it generates.
