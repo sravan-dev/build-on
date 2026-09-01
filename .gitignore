@@ -38,3 +38,4 @@ buildon-dev.zip
 .playwright-mcp/
 sql/.installed
 sql/.setup-token
+.health-token
