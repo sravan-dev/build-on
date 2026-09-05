@@ -248,7 +248,51 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 $envPath = __DIR__ . '/.env';
-check('.env present', file_exists($envPath), $envPath);
+$envExists = file_exists($envPath);
+check(
+    '.env present',
+    $envExists,
+    $envExists
+        ? $envPath . ' — ' . filesize($envPath) . ' bytes, last modified ' . date('Y-m-d H:i:s', (int) filemtime($envPath))
+        : $envPath
+);
+
+// Show what the FILE actually says, so "I edited it" can be distinguished from
+// "the running process is reading something else".
+if ($envExists) {
+    $raw = (string) file_get_contents($envPath);
+
+    if (strncmp($raw, chr(0xEF) . chr(0xBB) . chr(0xBF), 3) === 0) {
+        check('.env encoding', false, 'The file starts with a UTF-8 BOM. The first setting in it will be ignored — re-save as UTF-8 without BOM.');
+    }
+
+    foreach (['APP_ENV', 'ENABLE_QUICK_LOGIN', 'PROD_DB_NAME', 'PROD_DB_USER'] as $key) {
+        $fileValue = null;
+        if (preg_match('/^' . preg_quote($key, '/') . '=(.*)$/m', $raw, $m)) {
+            $fileValue = trim($m[1]);
+        }
+        $loaded = getenv($key);
+        $loaded = $loaded === false ? null : $loaded;
+
+        if ($fileValue === null) {
+            check('.env line ' . $key, false, 'Not found in the file at all.');
+            continue;
+        }
+        if ($key === 'PROD_DB_USER' || $key === 'PROD_DB_NAME') {
+            continue; // shown by the connection row already
+        }
+        $agrees = $loaded !== null && $loaded === $fileValue;
+        check(
+            '.env line ' . $key,
+            $agrees,
+            $agrees
+                ? 'file says "' . $fileValue . '" and that is what is loaded'
+                : 'file says "' . $fileValue . '" but the application loaded "'
+                    . ($loaded ?? '(nothing)') . '" — the running process is not reading this file, '
+                    . 'or the value is overridden by a real environment variable.'
+        );
+    }
+}
 
 $appEnv = getenv('APP_ENV') ?: '(unset)';
 $dbName = $appEnv === 'production' ? getenv('PROD_DB_NAME') : getenv('DEV_DB_NAME');
