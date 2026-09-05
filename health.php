@@ -141,6 +141,17 @@ function required_schema(): array
             'why' => 'Invoice discounts are stored here and printed on the document.',
         ],
         [
+            'what' => 'invoices.gross_amount',
+            'kind' => 'column',
+            'table' => 'invoices',
+            'column' => 'gross_amount',
+            'fix' => [
+                'ALTER TABLE invoices ADD COLUMN gross_amount DECIMAL(10,2) DEFAULT NULL AFTER total_amount',
+                'UPDATE invoices SET gross_amount = COALESCE(total_amount, 0) + COALESCE(discount, 0)',
+            ],
+            'why' => 'Every invoice insert, update and discount edit writes this column.',
+        ],
+        [
             'what' => 'quotations.discount',
             'kind' => 'column',
             'table' => 'quotations',
