@@ -44,8 +44,9 @@
     </IfModule>
 </FilesMatch>
 
-# Directory listings.
-Options -Indexes
+# Directory listings are NOT disabled here: "Options" is rejected outright with
+# a 500 unless the host allows AllowOverride Options, and a broken .htaccess
+# takes the whole site down. Turn indexes off in cPanel (Indexes) instead.
 # --- END hardening ---------------------------------------------------------
 
 # --- BEGIN pretty URLs ------------------------------------------------------
