@@ -254,7 +254,17 @@ $appEnv = getenv('APP_ENV') ?: '(unset)';
 $dbName = $appEnv === 'production' ? getenv('PROD_DB_NAME') : getenv('DEV_DB_NAME');
 $dbUser = $appEnv === 'production' ? getenv('PROD_DB_USER') : getenv('DEV_DB_USER');
 $dbHost = $appEnv === 'production' ? getenv('PROD_DB_HOST') : getenv('DEV_DB_HOST');
-check('APP_ENV', $appEnv === 'production', 'APP_ENV=' . $appEnv, $appEnv === 'production' ? 'error' : 'warn');
+$credSet = $appEnv === 'production' ? 'PROD_DB_*' : 'DEV_DB_*';
+check(
+    'APP_ENV',
+    $appEnv === 'production',
+    $appEnv === 'production'
+        ? 'APP_ENV=production — using the PROD_DB_* settings'
+        : 'APP_ENV=' . $appEnv . ' — the application is using the ' . $credSet
+            . ' settings (' . ($dbUser ?: 'unset') . '@' . ($dbHost ?: 'unset') . ', database '
+            . ($dbName ?: 'unset') . '). On a live server set APP_ENV=production so the PROD_DB_* settings are used.',
+    'error'
+);
 check('PHP version', PHP_VERSION_ID >= 80000, PHP_VERSION);
 check('pdo_mysql loaded', extension_loaded('pdo_mysql'), '');
 
@@ -274,9 +284,13 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
-    check('Database connection', true, 'Connected to `' . $dbName . '` as ' . $dbUser);
+    check('Database connection', true, 'Connected to `' . $dbName . '` as ' . $dbUser . ' (' . $credSet . ')');
 } catch (PDOException $e) {
-    check('Database connection', false, $e->getMessage());
+    $hint = '';
+    if (stripos($e->getMessage(), 'Access denied') !== false && $appEnv !== 'production') {
+        $hint = ' — these are the ' . $credSet . ' credentials. Set APP_ENV=production in .env to use PROD_DB_* instead.';
+    }
+    check('Database connection', false, $e->getMessage() . $hint);
 }
 
 $missing = [];
