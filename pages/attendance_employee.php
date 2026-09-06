@@ -25,6 +25,62 @@ if ($displayName === '') {
 
 $hour = (int) date('G');
 $greeting = $hour < 12 ? 'Good Morning' : ($hour < 17 ? 'Good Afternoon' : 'Good Evening');
+
+/**
+ * Seconds worked so far today, excluding breaks. The live timer starts from
+ * this and ticks in the browser, so it stays correct even if the page has been
+ * open for hours. Time is computed server-side because the device clock and the
+ * server clock disagree often enough to matter on a timesheet.
+ */
+function attendanceWorkedSeconds($pdo, $daily)
+{
+    if (!$daily || empty($daily['in_time'])) {
+        return [0, false];
+    }
+
+    $date = $daily['attendance_date'] ?? date('Y-m-d');
+    $start = strtotime($date . ' ' . $daily['in_time']);
+    $closed = !empty($daily['out_time']);
+    $end = $closed ? strtotime($date . ' ' . $daily['out_time']) : time();
+
+    if ($end < $start) {
+        if ($closed) {
+            $end += 86400; // a finished shift that ran past midnight
+        } else {
+            // Still open and the clock-in reads later than now: the record is for
+            // another day or the times are inconsistent. Counting 24 hours here
+            // would put a nonsense total on the timesheet, so report nothing.
+            return [0, false];
+        }
+    }
+    $worked = max(0, $end - $start);
+
+    // Subtract breaks: finished ones in full, an open one up to now.
+    $stmt = $pdo->prepare("SELECT start_time, end_time FROM attendance_logs
+                           WHERE daily_attendance_id = ? AND activity_type = 'break'");
+    $stmt->execute([$daily['id']]);
+
+    $onBreak = false;
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $b) {
+        if (empty($b['start_time'])) {
+            continue;
+        }
+        $bStart = strtotime($date . ' ' . $b['start_time']);
+        if (!empty($b['end_time'])) {
+            $bEnd = strtotime($date . ' ' . $b['end_time']);
+        } else {
+            $bEnd = time();
+            $onBreak = true;
+        }
+        if ($bEnd < $bStart) {
+            $bEnd += 86400;
+        }
+        $worked -= max(0, $bEnd - $bStart);
+    }
+
+    return [max(0, $worked), $onBreak];
+}
+
 $message = '';
 $error = '';
 
@@ -62,6 +118,9 @@ if ($daily) {
         }
     }
 }
+
+// Worked time so far today (breaks excluded); seeds the live counter.
+list($workedSeconds, $isOnBreak) = attendanceWorkedSeconds($pdo, $daily);
 
 // Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -231,6 +290,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
             </div>
             <p class="text-gray-400 mt-1"><?php echo date('l, F j, Y'); ?></p>
+
+            <?php if ($daily): ?>
+                <!-- Live worked-time counter. Seeded from the server, ticks in the browser. -->
+                <div class="mt-4 inline-block">
+                    <p class="text-xs uppercase tracking-wider text-gray-400">Worked today</p>
+                    <p id="worked-timer"
+                       class="text-3xl md:text-4xl font-bold tabular-nums <?php echo $current_status === 'Working' ? 'text-green-600' : 'text-gray-700'; ?>"
+                       data-seconds="<?php echo (int) $workedSeconds; ?>"
+                       data-running="<?php echo $current_status === 'Working' ? '1' : '0'; ?>">
+                        00:00:00
+                    </p>
+                    <?php if ($current_status === 'On Break'): ?>
+                        <p class="text-xs text-yellow-600 mt-1">Paused &mdash; on break</p>
+                    <?php elseif ($current_status === 'Completed'): ?>
+                        <p class="text-xs text-gray-400 mt-1">Final total for today</p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
 
             <?php if ($current_status === 'Working' && $last_log): ?>
                 <div class="mt-4 bg-gray-50 rounded p-3 inline-block">
@@ -474,4 +551,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('clockOutForm').submit();
         }
     }
+</script>
+
+<script>
+    // Worked-time counter. The starting value comes from the server (device clocks
+    // drift); the browser only advances it while the shift is actually running.
+    (function () {
+        const el = document.getElementById('worked-timer');
+        if (!el) return;
+
+        let seconds = parseInt(el.dataset.seconds || '0', 10);
+        const running = el.dataset.running === '1';
+
+        const render = function () {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            el.textContent = String(h).padStart(2, '0') + ':' +
+                             String(m).padStart(2, '0') + ':' +
+                             String(s).padStart(2, '0');
+        };
+
+        render();
+        if (running) {
+            setInterval(function () { seconds += 1; render(); }, 1000);
+        }
+    })();
 </script>
