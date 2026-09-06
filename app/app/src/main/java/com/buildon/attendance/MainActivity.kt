@@ -1,8 +1,13 @@
 package com.buildon.attendance
 
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import com.buildon.attendance.data.LocationProvider
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -45,6 +50,23 @@ private fun AttendanceApp(session: Session) {
     var message by remember { mutableStateOf<String?>(null) }
     var day by remember { mutableStateOf<Api.SiteDay?>(null) }
     var projects by remember { mutableStateOf<List<Api.Project>>(emptyList()) }
+
+    // Geofencing: a fenced site can only be started from inside it, so the app
+    // needs a position before it can even ask.
+    val context = LocalContext.current
+    val locations = remember { LocationProvider(context) }
+    var hasLocationPermission by remember { mutableStateOf(locations.hasPermission) }
+    var pendingStart by remember { mutableStateOf<Pair<Int?, String?>?>(null) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { granted ->
+        hasLocationPermission = granted.values.any { it }
+        if (!hasLocationPermission) {
+            error = "Location permission is required to start work at a site."
+            pendingStart = null
+        }
+    }
 
     /** Runs an API call, funnelling failures into the one error slot the UI shows. */
     fun run(successMessage: String? = null, block: suspend (String) -> Unit) {
@@ -123,8 +145,28 @@ private fun AttendanceApp(session: Session) {
             message = message,
             error = error,
             memoryOnly = session.isMemoryOnly,
+            hasLocationPermission = hasLocationPermission,
             onStartSite = { projectId, siteName ->
-                run("Started at site") { Api.siteStart(it, projectId, siteName) }
+                if (!locations.hasPermission) {
+                    pendingStart = projectId to siteName
+                    permissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                } else if (!locations.isLocationEnabled) {
+                    error = "Turn location on to start work at a site."
+                } else {
+                    run("Started at site") { token ->
+                        // The server decides whether this position is inside the
+                        // fence; the app only supplies it. A null here becomes a
+                        // refusal server-side for a fenced site, which is the
+                        // behaviour we want rather than a silent bypass.
+                        val fix = locations.current()
+                        Api.siteStart(token, projectId, siteName, fix?.latitude, fix?.longitude)
+                    }
+                }
             },
             onEndSite = { run("Site finished") { Api.siteEnd(it) } },
             onBreak = { start ->

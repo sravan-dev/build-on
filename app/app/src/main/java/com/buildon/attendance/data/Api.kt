@@ -45,7 +45,14 @@ object Api {
             }
     }
 
-    data class Project(val id: Int, val name: String)
+    data class Project(
+        val id: Int,
+        val name: String,
+        val latitude: Double? = null,
+        val longitude: Double? = null,
+        val radiusMetres: Int = 0,
+        val fenced: Boolean = false
+    )
 
     /** One stretch of work at one site. A day may have several. */
     data class SiteEntry(
@@ -165,7 +172,16 @@ object Api {
         val d = call("projects", "GET", token)
         val arr = d.optJSONArray("projects") ?: return emptyList()
         return (0 until arr.length()).mapNotNull { i ->
-            arr.optJSONObject(i)?.let { Project(it.optInt("id"), it.optString("name")) }
+            arr.optJSONObject(i)?.let { o ->
+                Project(
+                    id = o.optInt("id"),
+                    name = o.optString("name"),
+                    latitude = o.optDouble("latitude").takeIf { !o.isNull("latitude") },
+                    longitude = o.optDouble("longitude").takeIf { !o.isNull("longitude") },
+                    radiusMetres = o.optInt("geofence_radius", 0),
+                    fenced = o.optInt("geofence_enabled", 0) == 1
+                )
+            }
         }
     }
 
@@ -225,12 +241,22 @@ object Api {
         )
     }
 
-    suspend fun siteStart(token: String, projectId: Int?, siteName: String?) {
+    suspend fun siteStart(
+        token: String,
+        projectId: Int?,
+        siteName: String?,
+        latitude: Double?,
+        longitude: Double?
+    ) {
         call(
             "site_start", "POST", token,
             JSONObject().apply {
                 if (projectId != null) put("project_id", projectId)
                 if (!siteName.isNullOrBlank()) put("site_name", siteName)
+                if (latitude != null && longitude != null) {
+                    put("latitude", latitude)
+                    put("longitude", longitude)
+                }
             }
         )
     }

@@ -39,6 +39,7 @@ fun SiteDayScreen(
     message: String?,
     error: String?,
     memoryOnly: Boolean,
+    hasLocationPermission: Boolean = true,
     onStartSite: (Int?, String?) -> Unit,
     onEndSite: () -> Unit,
     onBreak: (Boolean) -> Unit,
@@ -97,6 +98,24 @@ fun SiteDayScreen(
                     onSelect = { selectedProject = it }
                 )
                 Spacer(Modifier.height(12.dp))
+
+                // Say why location matters before the worker taps and is refused.
+                val fenced = selectedProject?.let { sel ->
+                    projects.firstOrNull { it.id == sel.id }?.fenced
+                } ?: false
+                if (fenced || !hasLocationPermission) {
+                    Text(
+                        if (!hasLocationPermission)
+                            "Location permission is needed to start work. You will be asked on the next tap."
+                        else
+                            "This site checks your location. You must be within " +
+                                "${selectedProject?.radiusMetres ?: 0} m to start.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 10.dp)
+                    )
+                }
             }
 
             when {

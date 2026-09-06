@@ -163,6 +163,23 @@ function required_schema(): array
             'why' => 'Quotation discounts; without it the quotation list and document fail.',
         ],
         [
+            'what' => 'projects geofence columns',
+            'kind' => 'column',
+            'table' => 'projects',
+            'column' => 'geofence_enabled',
+            'fix' => [
+                'ALTER TABLE projects ADD COLUMN latitude DECIMAL(10,7) DEFAULT NULL AFTER name',
+                'ALTER TABLE projects ADD COLUMN longitude DECIMAL(10,7) DEFAULT NULL AFTER latitude',
+                'ALTER TABLE projects ADD COLUMN geofence_radius INT DEFAULT 200 AFTER longitude',
+                'ALTER TABLE projects ADD COLUMN geofence_enabled TINYINT(1) DEFAULT 0 AFTER geofence_radius',
+                'ALTER TABLE projects ADD COLUMN location_label VARCHAR(255) DEFAULT NULL AFTER geofence_enabled',
+                'ALTER TABLE attendance_site_entries ADD COLUMN start_latitude DECIMAL(10,7) DEFAULT NULL',
+                'ALTER TABLE attendance_site_entries ADD COLUMN start_longitude DECIMAL(10,7) DEFAULT NULL',
+                'ALTER TABLE attendance_site_entries ADD COLUMN start_distance_m INT DEFAULT NULL',
+            ],
+            'why' => 'Geofencing: site location, radius and where a start was recorded.',
+        ],
+        [
             'what' => 'attendance_site_entries table',
             'kind' => 'table',
             'table' => 'attendance_site_entries',

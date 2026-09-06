@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Include database connection
 include_once 'includes/db.php';
 require_once __DIR__ . '/includes/attendance_sites.php';
+require_once __DIR__ . '/includes/geofence.php';
 
 // API Response Helper Functions
 function sendResponse($success, $message, $data = null, $statusCode = 200)
@@ -778,7 +779,11 @@ try {
                 sendError('Invalid or expired token', 401);
             }
 
-            $stmt = $pdo->query("SELECT id, name, status FROM projects ORDER BY name");
+            // Fence details travel with the site list so the app can warn before
+            // the worker walks over, rather than only failing at the request.
+            $stmt = $pdo->query("SELECT id, name, status, latitude, longitude,
+                                        geofence_radius, geofence_enabled, location_label
+                                 FROM projects ORDER BY name");
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             sendSuccess('Projects list retrieved', [
@@ -1278,6 +1283,25 @@ try {
                 }
             }
 
+            // Geofence. A site with the fence switched on may only be started
+            // from inside its circle, and a missing position is a refusal —
+            // otherwise turning location off would walk straight through it.
+            $startLat = $requestData['latitude'] ?? null;
+            $startLon = $requestData['longitude'] ?? null;
+            $fence = projectGeofence($pdo, !empty($requestData['project_id']) ? (int) $requestData['project_id'] : null);
+            $check = checkGeofence($fence, $startLat, $startLon);
+
+            if (!$check['allowed']) {
+                sendResponse(false, $check['reason'], [
+                    'geofence' => [
+                        'blocked' => true,
+                        'distance_m' => $check['distance'],
+                        'radius_m' => (int) ($fence['geofence_radius'] ?? 0),
+                        'site' => $fence['name'] ?? null,
+                    ],
+                ], 403);
+            }
+
             $entryId = saveSiteEntry($pdo, [
                 'employee_id' => $employee_id,
                 'attendance_date' => $date,
@@ -1288,7 +1312,18 @@ try {
                 'created_by' => 'app',
             ]);
 
-            sendSuccess('Started at site', ['entry_id' => $entryId, 'time_in' => date('H:i:s')]);
+            if (isValidLatitude($startLat) && isValidLongitude($startLon)) {
+                $pdo->prepare("UPDATE attendance_site_entries
+                               SET start_latitude = ?, start_longitude = ?, start_distance_m = ?
+                               WHERE id = ?")
+                    ->execute([$startLat, $startLon, $check['distance'], $entryId]);
+            }
+
+            sendSuccess('Started at site', [
+                'entry_id' => $entryId,
+                'time_in' => date('H:i:s'),
+                'distance_m' => $check['distance'],
+            ]);
             break;
 
         case 'site_end':
