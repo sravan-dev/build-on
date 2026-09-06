@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Include database connection
 include_once 'includes/db.php';
+require_once __DIR__ . '/includes/attendance_sites.php';
 
 // API Response Helper Functions
 function sendResponse($success, $message, $data = null, $statusCode = 200)
@@ -82,9 +83,14 @@ function touchLastActive($pdo, $table, $id)
 
 function fetchActiveEmployeeByCode($pdo, $emp_id)
 {
+    // emp_id is the code the app asks for and the code shown throughout the
+    // portal, so it is tried first. The legacy employee_id column holds codes
+    // that are offset from emp_id on some rows, and matching it first made
+    // "BUE010" authenticate as the employee whose emp_id is BUE018 — a worker
+    // signing in as themselves and landing on someone else's record.
     $queries = [
-        "SELECT * FROM employees WHERE employee_id = ? AND status = 'active' LIMIT 1",
         "SELECT * FROM employees WHERE emp_id = ? AND status = 'active' LIMIT 1",
+        "SELECT * FROM employees WHERE employee_id = ? AND status = 'active' LIMIT 1",
     ];
 
     foreach ($queries as $sql) {
@@ -1178,6 +1184,222 @@ try {
             } catch (PDOException $e) {
                 sendError('Table not found or database error', 500);
             }
+            break;
+
+
+        // ========================================
+        // MULTI-SITE ATTENDANCE
+        //
+        // A worker may work several sites in one day. The day keeps one
+        // attendance record and each stretch of work is an entry under it, so
+        // finishing at one site and starting at the next needs no new record.
+        // ========================================
+        case 'site_today':
+            if ($requestMethod !== 'GET') {
+                sendError('Method not allowed. Use GET', 405);
+            }
+            $token = getBearerToken();
+            if (!$token) {
+                sendError('Authorization token required', 401);
+            }
+            $authEmployee = validateToken($pdo, $token);
+            if (!$authEmployee) {
+                sendError('Invalid or expired token', 401);
+            }
+            $employee_id = (int) $authEmployee['id'];
+            $date = date('Y-m-d');
+
+            $entries = siteEntriesForDay($pdo, $employee_id, $date);
+            $open = null;
+            $total = 0.0;
+            $break = 0.0;
+            $payload = [];
+
+            foreach ($entries as $e) {
+                $isOpen = empty($e['time_out']);
+                $onBreak = !empty($e['break_out']) && empty($e['break_in']);
+                $total += (float) $e['working_hours'];
+                $break += siteEntryBreakHours($e['break_out'], $e['break_in']);
+
+                $row = [
+                    'id' => (int) $e['id'],
+                    'project_id' => $e['project_id'] !== null ? (int) $e['project_id'] : null,
+                    'site_name' => $e['site_name'] ?: ($e['project_name'] ?? null),
+                    'time_in' => $e['time_in'],
+                    'break_out' => $e['break_out'],
+                    'break_in' => $e['break_in'],
+                    'time_out' => $e['time_out'],
+                    'working_hours' => (float) $e['working_hours'],
+                    'is_open' => $isOpen,
+                    'on_break' => $isOpen && $onBreak,
+                ];
+                $payload[] = $row;
+                if ($isOpen) {
+                    $open = $row;
+                }
+            }
+
+            $normal = normalWorkingHours();
+            sendSuccess('Site entries for today', [
+                'date' => $date,
+                'entries' => $payload,
+                'open_entry' => $open,
+                'sites_worked' => count($payload),
+                'total_hours' => round($total, 2),
+                'break_hours' => round($break, 2),
+                'overtime_hours' => round(max(0, $total - $normal), 2),
+                'normal_hours' => $normal,
+                // What the app should offer next.
+                'can_start_site' => $open === null,
+                'can_end_site' => $open !== null && !$open['on_break'],
+                'can_start_break' => $open !== null && !$open['on_break'] && empty($open['break_out']),
+                'can_end_break' => $open !== null && $open['on_break'],
+            ]);
+            break;
+
+        case 'site_start':
+            if ($requestMethod !== 'POST') {
+                sendError('Method not allowed. Use POST', 405);
+            }
+            $token = getBearerToken();
+            if (!$token) {
+                sendError('Authorization token required', 401);
+            }
+            $authEmployee = validateToken($pdo, $token);
+            if (!$authEmployee) {
+                sendError('Invalid or expired token', 401);
+            }
+            $employee_id = (int) $authEmployee['id'];
+            $date = date('Y-m-d');
+
+            foreach (siteEntriesForDay($pdo, $employee_id, $date) as $e) {
+                if (empty($e['time_out'])) {
+                    sendError('Finish the current site before starting another.', 409);
+                }
+            }
+
+            $entryId = saveSiteEntry($pdo, [
+                'employee_id' => $employee_id,
+                'attendance_date' => $date,
+                'project_id' => $requestData['project_id'] ?? null,
+                'site_name' => $requestData['site_name'] ?? '',
+                'time_in' => date('H:i:s'),
+                'notes' => $requestData['note'] ?? null,
+                'created_by' => 'app',
+            ]);
+
+            sendSuccess('Started at site', ['entry_id' => $entryId, 'time_in' => date('H:i:s')]);
+            break;
+
+        case 'site_end':
+            if ($requestMethod !== 'POST') {
+                sendError('Method not allowed. Use POST', 405);
+            }
+            $token = getBearerToken();
+            if (!$token) {
+                sendError('Authorization token required', 401);
+            }
+            $authEmployee = validateToken($pdo, $token);
+            if (!$authEmployee) {
+                sendError('Invalid or expired token', 401);
+            }
+            $employee_id = (int) $authEmployee['id'];
+            $date = date('Y-m-d');
+
+            $open = null;
+            foreach (siteEntriesForDay($pdo, $employee_id, $date) as $e) {
+                if (empty($e['time_out'])) {
+                    $open = $e;
+                    break;
+                }
+            }
+            if (!$open) {
+                sendError('You are not currently checked in at a site.', 409);
+            }
+
+            // An open break is closed with the site, otherwise the entry would
+            // keep counting break time that never ended.
+            $breakIn = $open['break_in'];
+            if (!empty($open['break_out']) && empty($breakIn)) {
+                $breakIn = date('H:i:s');
+            }
+
+            saveSiteEntry($pdo, [
+                'id' => $open['id'],
+                'employee_id' => $employee_id,
+                'attendance_date' => $date,
+                'project_id' => $open['project_id'],
+                'site_name' => $open['site_name'],
+                'time_in' => $open['time_in'],
+                'break_out' => $open['break_out'],
+                'break_in' => $breakIn,
+                'time_out' => date('H:i:s'),
+                'notes' => $open['notes'],
+            ]);
+
+            sendSuccess('Finished at site', ['entry_id' => (int) $open['id'], 'time_out' => date('H:i:s')]);
+            break;
+
+        case 'site_break':
+            if ($requestMethod !== 'POST') {
+                sendError('Method not allowed. Use POST', 405);
+            }
+            $token = getBearerToken();
+            if (!$token) {
+                sendError('Authorization token required', 401);
+            }
+            $authEmployee = validateToken($pdo, $token);
+            if (!$authEmployee) {
+                sendError('Invalid or expired token', 401);
+            }
+            $employee_id = (int) $authEmployee['id'];
+            $date = date('Y-m-d');
+            $action = $requestData['action'] ?? 'start';
+
+            $open = null;
+            foreach (siteEntriesForDay($pdo, $employee_id, $date) as $e) {
+                if (empty($e['time_out'])) {
+                    $open = $e;
+                    break;
+                }
+            }
+            if (!$open) {
+                sendError('You are not currently checked in at a site.', 409);
+            }
+
+            if ($action === 'start') {
+                if (!empty($open['break_out']) && empty($open['break_in'])) {
+                    sendError('You are already on a break.', 409);
+                }
+                if (!empty($open['break_out'])) {
+                    sendError('This site entry already has a break recorded.', 409);
+                }
+                $breakOut = date('H:i:s');
+                $breakIn = null;
+                $message = 'Break started';
+            } else {
+                if (empty($open['break_out']) || !empty($open['break_in'])) {
+                    sendError('You are not on a break.', 409);
+                }
+                $breakOut = $open['break_out'];
+                $breakIn = date('H:i:s');
+                $message = 'Back to work';
+            }
+
+            saveSiteEntry($pdo, [
+                'id' => $open['id'],
+                'employee_id' => $employee_id,
+                'attendance_date' => $date,
+                'project_id' => $open['project_id'],
+                'site_name' => $open['site_name'],
+                'time_in' => $open['time_in'],
+                'break_out' => $breakOut,
+                'break_in' => $breakIn,
+                'time_out' => null,
+                'notes' => $open['notes'],
+            ]);
+
+            sendSuccess($message, ['entry_id' => (int) $open['id']]);
             break;
 
         // ========================================

@@ -10,7 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.buildon.attendance.data.Api
 import com.buildon.attendance.data.Session
-import com.buildon.attendance.ui.AttendanceScreen
+import com.buildon.attendance.ui.SiteDayScreen
 import com.buildon.attendance.ui.BuildonTheme
 import com.buildon.attendance.ui.LoginScreen
 import kotlinx.coroutines.launch
@@ -43,7 +43,7 @@ private fun AttendanceApp(session: Session) {
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var message by remember { mutableStateOf<String?>(null) }
-    var status by remember { mutableStateOf<Api.TodayStatus?>(null) }
+    var day by remember { mutableStateOf<Api.SiteDay?>(null) }
     var projects by remember { mutableStateOf<List<Api.Project>>(emptyList()) }
 
     /** Runs an API call, funnelling failures into the one error slot the UI shows. */
@@ -59,7 +59,7 @@ private fun AttendanceApp(session: Session) {
             message = null
             try {
                 block(token)
-                status = Api.today(token)
+                day = Api.siteToday(token)
                 message = successMessage
             } catch (e: Exception) {
                 val text = e.message ?: "Something went wrong."
@@ -84,7 +84,7 @@ private fun AttendanceApp(session: Session) {
         val token = session.token ?: return@LaunchedEffect
         busy = true
         try {
-            status = Api.today(token)
+            day = Api.siteToday(token)
             projects = Api.projects(token)
         } catch (e: Exception) {
             error = e.message
@@ -115,28 +115,28 @@ private fun AttendanceApp(session: Session) {
             }
         )
     } else {
-        AttendanceScreen(
+        SiteDayScreen(
             name = name,
-            status = status,
+            day = day,
             projects = projects,
             busy = busy,
             message = message,
             error = error,
-            onClockIn = { projectId -> run("Clocked in") { Api.clockIn(it, projectId) } },
-            onClockOut = { run("Clocked out") { Api.clockOut(it) } },
-            onStartBreak = { run("Break started") { Api.startBreak(it) } },
-            onEndBreak = { projectId -> run("Back to work") { Api.endBreak(it, projectId) } },
-            onSwitchSite = { projectId ->
-                run("Site switched") { Api.switchSite(it, projectId, isOffsite = false) }
+            memoryOnly = session.isMemoryOnly,
+            onStartSite = { projectId, siteName ->
+                run("Started at site") { Api.siteStart(it, projectId, siteName) }
+            },
+            onEndSite = { run("Site finished") { Api.siteEnd(it) } },
+            onBreak = { start ->
+                run(if (start) "Break started" else "Back to work") { Api.siteBreak(it, start) }
             },
             onRefresh = { run { } },
             onSignOut = {
                 session.clear()
-                status = null
+                day = null
                 projects = emptyList()
                 signedIn = false
-            },
-            memoryOnly = session.isMemoryOnly
+            }
         )
     }
 }

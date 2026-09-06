@@ -47,6 +47,41 @@ object Api {
 
     data class Project(val id: Int, val name: String)
 
+    /** One stretch of work at one site. A day may have several. */
+    data class SiteEntry(
+        val id: Int,
+        val siteName: String?,
+        val timeIn: String?,
+        val breakOut: String?,
+        val breakIn: String?,
+        val timeOut: String?,
+        val hours: Double,
+        val isOpen: Boolean,
+        val onBreak: Boolean
+    )
+
+    /** Today across every site worked, plus what the worker may do next. */
+    data class SiteDay(
+        val entries: List<SiteEntry>,
+        val openEntry: SiteEntry?,
+        val sitesWorked: Int,
+        val totalHours: Double,
+        val breakHours: Double,
+        val overtimeHours: Double,
+        val canStartSite: Boolean,
+        val canEndSite: Boolean,
+        val canStartBreak: Boolean,
+        val canEndBreak: Boolean
+    ) {
+        val state: String
+            get() = when {
+                openEntry == null && entries.isEmpty() -> "Not Started"
+                openEntry == null -> "Between Sites"
+                openEntry.onBreak -> "On Break"
+                else -> "Working"
+            }
+    }
+
     private const val TIMEOUT_MS = 20_000
 
     private suspend fun call(
@@ -154,6 +189,59 @@ object Api {
             "end_break", "POST", token,
             JSONObject().apply { if (projectId != null) put("project_id", projectId) }
         ).let { "Back to work" }
+
+    suspend fun siteToday(token: String): SiteDay {
+        val d = call("site_today", "GET", token)
+        val arr = d.optJSONArray("entries")
+        val entries = buildList {
+            for (i in 0 until (arr?.length() ?: 0)) {
+                val e = arr!!.optJSONObject(i) ?: continue
+                add(
+                    SiteEntry(
+                        id = e.optInt("id"),
+                        siteName = e.optString("site_name").takeIf { it.isNotBlank() && it != "null" },
+                        timeIn = e.optString("time_in").takeIf { it.isNotBlank() && it != "null" },
+                        breakOut = e.optString("break_out").takeIf { it.isNotBlank() && it != "null" },
+                        breakIn = e.optString("break_in").takeIf { it.isNotBlank() && it != "null" },
+                        timeOut = e.optString("time_out").takeIf { it.isNotBlank() && it != "null" },
+                        hours = e.optDouble("working_hours", 0.0),
+                        isOpen = e.optBoolean("is_open"),
+                        onBreak = e.optBoolean("on_break")
+                    )
+                )
+            }
+        }
+        return SiteDay(
+            entries = entries,
+            openEntry = entries.firstOrNull { it.isOpen },
+            sitesWorked = d.optInt("sites_worked"),
+            totalHours = d.optDouble("total_hours", 0.0),
+            breakHours = d.optDouble("break_hours", 0.0),
+            overtimeHours = d.optDouble("overtime_hours", 0.0),
+            canStartSite = d.optBoolean("can_start_site"),
+            canEndSite = d.optBoolean("can_end_site"),
+            canStartBreak = d.optBoolean("can_start_break"),
+            canEndBreak = d.optBoolean("can_end_break")
+        )
+    }
+
+    suspend fun siteStart(token: String, projectId: Int?, siteName: String?) {
+        call(
+            "site_start", "POST", token,
+            JSONObject().apply {
+                if (projectId != null) put("project_id", projectId)
+                if (!siteName.isNullOrBlank()) put("site_name", siteName)
+            }
+        )
+    }
+
+    suspend fun siteEnd(token: String) {
+        call("site_end", "POST", token, JSONObject())
+    }
+
+    suspend fun siteBreak(token: String, start: Boolean) {
+        call("site_break", "POST", token, JSONObject().put("action", if (start) "start" else "end"))
+    }
 
     suspend fun switchSite(token: String, projectId: Int?, isOffsite: Boolean, note: String = ""): String =
         call(
