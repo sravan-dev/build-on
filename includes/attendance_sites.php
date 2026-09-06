@@ -165,13 +165,23 @@ if (!function_exists('saveSiteEntry')) {
         $hours = siteEntryHours($timeIn, $timeOut, $breakOut, $breakIn);
 
         if (!empty($data['id'])) {
+            // The id arrives from a form field, so confirm it really is an entry
+            // for this worker on this date. Without the check, posting someone
+            // else's entry id would rewrite their timesheet.
+            $own = $pdo->prepare("SELECT id FROM attendance_site_entries
+                                  WHERE id = ? AND employee_id = ? AND attendance_date = ?");
+            $own->execute([(int) $data['id'], $employeeId, $date]);
+            if (!$own->fetchColumn()) {
+                throw new RuntimeException('That entry does not belong to the selected worker and date.');
+            }
+
             $stmt = $pdo->prepare("UPDATE attendance_site_entries
                                    SET project_id = ?, site_name = ?, time_in = ?, break_out = ?,
                                        break_in = ?, time_out = ?, working_hours = ?, notes = ?
-                                   WHERE id = ?");
+                                   WHERE id = ? AND employee_id = ? AND attendance_date = ?");
             $stmt->execute([
                 $projectId, $siteName ?: null, $timeIn, $breakOut, $breakIn, $timeOut,
-                $hours, $data['notes'] ?? null, (int) $data['id'],
+                $hours, $data['notes'] ?? null, (int) $data['id'], $employeeId, $date,
             ]);
             $entryId = (int) $data['id'];
         } else {
@@ -193,17 +203,25 @@ if (!function_exists('saveSiteEntry')) {
 }
 
 if (!function_exists('deleteSiteEntry')) {
-    function deleteSiteEntry(PDO $pdo, int $entryId): void
+    /**
+     * Remove one entry. The caller passes the worker and date currently on
+     * screen; an id belonging to anyone else is refused rather than deleted.
+     */
+    function deleteSiteEntry(PDO $pdo, int $entryId, int $employeeId, string $date): void
     {
-        $stmt = $pdo->prepare("SELECT daily_attendance_id FROM attendance_site_entries WHERE id = ?");
-        $stmt->execute([$entryId]);
+        $stmt = $pdo->prepare("SELECT daily_attendance_id FROM attendance_site_entries
+                               WHERE id = ? AND employee_id = ? AND attendance_date = ?");
+        $stmt->execute([$entryId, $employeeId, $date]);
         $dailyId = (int) $stmt->fetchColumn();
 
-        $pdo->prepare("DELETE FROM attendance_site_entries WHERE id = ?")->execute([$entryId]);
-
-        if ($dailyId) {
-            syncDailyFromSiteEntries($pdo, $dailyId);
+        if (!$dailyId) {
+            throw new RuntimeException('That entry does not belong to the selected worker and date.');
         }
+
+        $pdo->prepare("DELETE FROM attendance_site_entries WHERE id = ? AND employee_id = ? AND attendance_date = ?")
+            ->execute([$entryId, $employeeId, $date]);
+
+        syncDailyFromSiteEntries($pdo, $dailyId);
     }
 }
 

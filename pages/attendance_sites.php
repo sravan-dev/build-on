@@ -25,11 +25,22 @@ if (!in_array($role, ['superadmin', 'admin', 'supervisor', 'accounts_manager'], 
 $message = '';
 $error = '';
 
+// Timesheets are money, so a third-party page must not be able to drive this
+// form through a logged-in supervisor's browser.
+if (empty($_SESSION['attendance_csrf'])) {
+    $_SESSION['attendance_csrf'] = bin2hex(random_bytes(32));
+}
+$csrf = $_SESSION['attendance_csrf'];
+
 $selectedDate = $_GET['date'] ?? $_POST['attendance_date'] ?? date('Y-m-d');
 $selectedEmployee = (int) ($_GET['employee_id'] ?? $_POST['employee_id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        if (!hash_equals($csrf, (string) ($_POST['csrf'] ?? ''))) {
+            throw new Exception('This form expired. Reload the page and try again.');
+        }
+
         if (isset($_POST['save_entry'])) {
             if (!$selectedEmployee) {
                 throw new Exception('Select a worker first.');
@@ -54,7 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = empty($_POST['entry_id']) ? 'Site entry added.' : 'Site entry updated.';
 
         } elseif (isset($_POST['delete_entry'])) {
-            deleteSiteEntry($pdo, (int) $_POST['delete_entry']);
+            if (!$selectedEmployee) {
+                throw new Exception('Select a worker first.');
+            }
+            deleteSiteEntry($pdo, (int) $_POST['delete_entry'], $selectedEmployee, $selectedDate);
             $message = 'Site entry removed.';
         }
     } catch (Exception $e) {
@@ -206,6 +220,7 @@ foreach ($employees as $emp) {
                                 <form method="post" class="inline" onsubmit="return confirm('Remove this site entry?')">
                                     <input type="hidden" name="employee_id" value="<?php echo $selectedEmployee; ?>">
                                     <input type="hidden" name="attendance_date" value="<?php echo htmlspecialchars($selectedDate); ?>">
+                                    <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($csrf); ?>">
                                     <button type="submit" name="delete_entry" value="<?php echo $e['id']; ?>"
                                         class="text-red-600 hover:text-red-800" title="Remove"><i class="fas fa-trash"></i></button>
                                 </form>
@@ -234,6 +249,7 @@ foreach ($employees as $emp) {
         <form method="post" class="space-y-4">
             <input type="hidden" name="employee_id" value="<?php echo $selectedEmployee; ?>">
             <input type="hidden" name="attendance_date" value="<?php echo htmlspecialchars($selectedDate); ?>">
+            <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($csrf); ?>">
             <?php if ($editing): ?>
                 <input type="hidden" name="entry_id" value="<?php echo $editing['id']; ?>">
             <?php endif; ?>
