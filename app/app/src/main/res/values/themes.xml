@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compose draws the UI; this only styles the window before it appears. -->
+    <style name="Theme.Buildon" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#EE7B00</item>
+        <item name="android:windowBackground">#F4F5F7</item>
+    </style>
+</resources>

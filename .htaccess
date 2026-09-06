@@ -47,6 +47,12 @@
 # Directory listings are NOT disabled here: "Options" is rejected outright with
 # a 500 unless the host allows AllowOverride Options, and a broken .htaccess
 # takes the whole site down. Turn indexes off in cPanel (Indexes) instead.
+# Serve the employee APK as an installable package rather than a download of
+# unknown type, which some Android browsers refuse to open.
+<IfModule mod_mime.c>
+    AddType application/vnd.android.package-archive .apk
+</IfModule>
+
 # --- END hardening ---------------------------------------------------------
 
 # --- BEGIN pretty URLs ------------------------------------------------------
