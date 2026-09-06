@@ -39,3 +39,4 @@ buildon-dev.zip
 sql/.installed
 sql/.setup-token
 .health-token
+dist/
