@@ -44,3 +44,7 @@ app/.gradle/
 app/build/
 app/app/build/
 app/local.properties
+
+# Built APKs are copied here for distribution; they are build output, not source.
+buildon-attendance.apk
+app/buildon-attendance.apk
