@@ -48,7 +48,18 @@ $activeIconStyle = 'color: #f07d00;';
             <button id="themeDark" class="px-3 py-1 rounded ml-2">Dark</button>
         </div> -->
     </div>
-    <nav class="px-1 py-2 space-y-1">
+    <!-- The menu runs to thirty-odd entries, so finding one meant scrolling the
+         whole list. Type to narrow it; the box is hidden from print. -->
+    <div class="px-1 mb-2">
+        <div class="relative">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input type="search" id="nav-filter" placeholder="Search menu..." autocomplete="off"
+                class="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+        </div>
+        <p id="nav-filter-empty" class="hidden text-xs text-gray-400 mt-2 px-2">No menu item matches.</p>
+    </div>
+
+    <nav class="px-1 py-2 space-y-1" id="sidebar-nav">
         <?php if ($role === 'supervisor'): ?>
             <!-- Supervisor: Dashboard & Approvals -->
             <a href="index.php?page=supervisor_dashboard"
@@ -385,3 +396,50 @@ $activeIconStyle = 'color: #f07d00;';
         </a>
     </div>
 </div>
+
+<script>
+    // Sidebar helpers: filter the long menu, and make sure the page you are on
+    // is visible when the sidebar first renders rather than off-screen.
+    (function () {
+        const nav = document.getElementById('sidebar-nav');
+        const box = document.getElementById('nav-filter');
+        const empty = document.getElementById('nav-filter-empty');
+        if (!nav) return;
+
+        const links = Array.from(nav.querySelectorAll('a'));
+
+        if (box) {
+            box.addEventListener('input', function () {
+                const term = this.value.trim().toLowerCase();
+                let shown = 0;
+
+                links.forEach(function (link) {
+                    const text = (link.textContent || '').trim().toLowerCase();
+                    const match = term === '' || text.indexOf(term) !== -1;
+                    link.style.display = match ? '' : 'none';
+                    if (match) shown++;
+                });
+
+                // Section headings are noise while filtering.
+                nav.querySelectorAll('.nav-section, hr').forEach(function (el) {
+                    el.style.display = term === '' ? '' : 'none';
+                });
+
+                if (empty) empty.classList.toggle('hidden', shown > 0);
+            });
+
+            box.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    this.value = '';
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+        }
+
+        // Bring the active entry into view inside the scrolling sidebar.
+        const active = nav.querySelector('a.active');
+        if (active && typeof active.scrollIntoView === 'function') {
+            active.scrollIntoView({ block: 'center' });
+        }
+    })();
+</script>
