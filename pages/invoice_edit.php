@@ -210,6 +210,10 @@ $projectOptions = $pdo->query("SELECT id, name FROM projects ORDER BY name")->fe
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Edit Invoice #<?php echo $invoice_id; ?></title>
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../favicon-192x192.png">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <script>

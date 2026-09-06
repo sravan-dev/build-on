@@ -405,6 +405,10 @@ $failing = array_filter($checks, static fn($c) => !$c['ok'] && $c['severity'] ==
 <!doctype html>
 <meta charset="utf-8">
 <title>Buildon Accounts — health check</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   body { font: 14px/1.6 system-ui, sans-serif; max-width: 860px; margin: 40px auto; padding: 0 16px; color: #333; }
   h1 { font-size: 22px; margin-bottom: 4px; }

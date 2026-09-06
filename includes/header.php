@@ -9,6 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Buildon Accounts</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load Font Awesome CSS from CDN (free) for reliable icons -->

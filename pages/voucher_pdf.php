@@ -33,6 +33,10 @@ $html = '
 <head>
     <meta charset="UTF-8">
     <title>Cash Voucher #' . htmlspecialchars($voucher['voucher_no']) . '</title>
+    <link rel="icon" href="../favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../favicon-192x192.png">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
         .voucher-container { border: 2px solid #000; padding: 20px; background: white; }
