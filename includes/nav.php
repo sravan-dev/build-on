@@ -251,6 +251,13 @@ $activeIconStyle = 'color: #f07d00;';
                     style="<?php echo ($page === 'attendance_sites') ? $activeIconStyle : ''; ?>"></i>
                 <span class="ml-3">Attendance Entry</span>
             </a>
+            <a href="index.php?page=geofencing"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'geofencing') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'geofencing') ? $activeStyle : ''; ?>">
+                <i class="fas fa-draw-polygon nav-icon"
+                    style="<?php echo ($page === 'geofencing') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Geofencing</span>
+            </a>
 
             <a href="index.php?page=renewal_tracking"
                 class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'renewal_tracking') ? 'active' : ''; ?>"
