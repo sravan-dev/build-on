@@ -255,6 +255,7 @@ $clients = $pdo->query("SELECT id, name FROM clients")->fetchAll();
                         <select name="project_id" id="add-project_id"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
                             <option value="">No Project</option>
+                            <option value="new_project_action" class="font-bold text-primary">+ Add New Project</option>
                             <?php foreach ($projectOptions as $projectOption): ?>
                                 <option value="<?php echo $projectOption['id']; ?>">
                                     <?php echo htmlspecialchars($projectOption['name']); ?>
@@ -792,6 +793,7 @@ $clients = $pdo->query("SELECT id, name FROM clients")->fetchAll();
                         <select name="project_id" id="edit-project_id"
                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                             <option value="">No Project</option>
+                            <option value="new_project_action" class="font-bold text-primary">+ Add New Project</option>
                             <?php foreach ($projectOptions as $projectOption): ?>
                             <option value="<?php echo $projectOption['id']; ?>"><?php echo htmlspecialchars($projectOption['name']); ?></option>
                             <?php endforeach; ?>
@@ -1018,8 +1020,142 @@ $clients = $pdo->query("SELECT id, name FROM clients")->fetchAll();
     </div>
 </div>
 
+<!-- Add Project Modal -->
+<div id="addProjectModal" class="hidden fixed z-50 inset-0 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-900 opacity-50" onclick="closeAddProjectModal()"></div>
+        </div>
+        <div class="relative bg-white rounded-lg shadow-xl w-full max-w-md">
+            <form id="ajaxProjectForm" method="post">
+                <div class="px-4 py-3 border-b flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-900">Add New Project</h3>
+                    <button type="button" onclick="closeAddProjectModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Project Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Client</label>
+                        <select name="client_id" id="ajax-project-client"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">No Client</option>
+                            <?php foreach ($clients as $client): ?>
+                                <option value="<?php echo $client['id']; ?>"><?php echo htmlspecialchars($client['name']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                        <input type="date" name="start_date"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <p id="ajax-project-error" class="hidden text-sm text-red-600"></p>
+                </div>
+                <div class="px-4 py-3 border-t flex justify-end gap-2">
+                    <button type="button" onclick="closeAddProjectModal()"
+                        class="px-4 py-2 bg-white border rounded-md text-gray-700">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-primary hover:bg-secondary text-white rounded-md">
+                        <i class="fas fa-save mr-2"></i>Save Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     let activeClientSelect = null;
+    let activeProjectSelect = null;
+
+    // Selecting "+ Add New Project" opens the modal instead of setting a value.
+    function initProjectDropdowns() {
+        document.querySelectorAll('select[name="project_id"]').forEach(select => {
+            select.addEventListener('change', function () {
+                if (this.value === 'new_project_action') {
+                    activeProjectSelect = this;
+                    this.value = '';
+                    openAddProjectModal();
+                }
+            });
+        });
+    }
+
+    function openAddProjectModal() {
+        document.getElementById('addProjectModal').classList.remove('hidden');
+        document.getElementById('ajaxProjectForm').reset();
+        document.getElementById('ajax-project-error').classList.add('hidden');
+
+        // Default the modal's client to whatever the invoice already has.
+        const invoiceClient = activeProjectSelect
+            ? activeProjectSelect.closest('form')?.querySelector('select[name="client_id"]')
+            : null;
+        const modalClient = document.getElementById('ajax-project-client');
+        if (invoiceClient && modalClient && invoiceClient.value && invoiceClient.value !== 'new_client_action') {
+            modalClient.value = invoiceClient.value;
+        }
+    }
+
+    function closeAddProjectModal() {
+        document.getElementById('addProjectModal').classList.add('hidden');
+    }
+
+    document.getElementById('ajaxProjectForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const data = Object.fromEntries(new FormData(this).entries());
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+        submitBtn.disabled = true;
+
+        fetch('ajax/add_project.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                document.querySelectorAll('select[name="project_id"]').forEach(select => {
+                    const option = document.createElement('option');
+                    option.value = result.project.id;
+                    option.textContent = result.project.name;
+                    const addOption = select.querySelector('option[value="new_project_action"]');
+                    if (addOption) {
+                        select.insertBefore(option, addOption.nextSibling);
+                    } else {
+                        select.appendChild(option);
+                    }
+                });
+
+                if (activeProjectSelect) {
+                    activeProjectSelect.value = result.project.id;
+                }
+                closeAddProjectModal();
+            } else {
+                const errorDiv = document.getElementById('ajax-project-error');
+                errorDiv.textContent = result.message || 'Error occurred';
+                errorDiv.classList.remove('hidden');
+            }
+        })
+        .catch(() => {
+            const errorDiv = document.getElementById('ajax-project-error');
+            errorDiv.textContent = 'Could not reach the server.';
+            errorDiv.classList.remove('hidden');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+
 
     function initClientDropdowns() {
         const clientSelects = document.querySelectorAll('select[name="client_id"]');
@@ -1111,6 +1247,7 @@ $clients = $pdo->query("SELECT id, name FROM clients")->fetchAll();
 
     // Initialize dropdowns on load
     document.addEventListener('DOMContentLoaded', initClientDropdowns);
+    document.addEventListener('DOMContentLoaded', initProjectDropdowns);
 </script>
 
 <!-- Discount Modal -->
