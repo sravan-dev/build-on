@@ -135,7 +135,8 @@ private fun AttendanceApp(session: Session) {
                 status = null
                 projects = emptyList()
                 signedIn = false
-            }
+            },
+            memoryOnly = session.isMemoryOnly
         )
     }
 }

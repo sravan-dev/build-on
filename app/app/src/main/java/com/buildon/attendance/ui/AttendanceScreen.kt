@@ -38,7 +38,8 @@ fun AttendanceScreen(
     onEndBreak: (Int?) -> Unit,
     onSwitchSite: (Int?) -> Unit,
     onRefresh: () -> Unit,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    memoryOnly: Boolean = false
 ) {
     var selectedProject by remember(projects) { mutableStateOf(projects.firstOrNull()) }
     val state = status?.state ?: "…"
@@ -161,6 +162,17 @@ fun AttendanceScreen(
             error?.let {
                 Spacer(Modifier.height(18.dp))
                 Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+            }
+
+            if (memoryOnly) {
+                Spacer(Modifier.height(20.dp))
+                Text(
+                    "Secure storage is unavailable on this device, so you will need " +
+                        "to sign in again after closing the app.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
             }
 
             Spacer(Modifier.height(28.dp))
