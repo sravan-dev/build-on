@@ -65,6 +65,13 @@ $activeIconStyle = 'color: #f07d00;';
                     style="<?php echo ($page === 'attendance_approvals') ? $activeIconStyle : ''; ?>"></i>
                 <span class="ml-3">User Requests</span>
             </a>
+            <a href="index.php?page=attendance_sites"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'attendance_sites') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'attendance_sites') ? $activeStyle : ''; ?>">
+                <i class="fas fa-map-marker-alt nav-icon"
+                    style="<?php echo ($page === 'attendance_sites') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Attendance Entry</span>
+            </a>
         <?php elseif ($role === 'accounts_manager'): ?>
             <!-- Accounts Manager: Cash Voucher, Expenses, Vehicles, Cash & Bank, Purchases -->
             <a href="index.php?page=vouchers"
@@ -229,6 +236,13 @@ $activeIconStyle = 'color: #f07d00;';
                 <i class="fas fa-user-check nav-icon"
                     style="<?php echo ($page === 'attendance') ? $activeIconStyle : ''; ?>"></i>
                 <span class="ml-3">Attendance</span>
+            </a>
+            <a href="index.php?page=attendance_sites"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'attendance_sites') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'attendance_sites') ? $activeStyle : ''; ?>">
+                <i class="fas fa-map-marker-alt nav-icon"
+                    style="<?php echo ($page === 'attendance_sites') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Attendance Entry</span>
             </a>
 
             <a href="index.php?page=renewal_tracking"
