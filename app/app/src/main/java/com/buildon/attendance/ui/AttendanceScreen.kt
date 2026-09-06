@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.buildon.attendance.data.Api
@@ -67,12 +69,19 @@ fun AttendanceScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = name.ifBlank { "Employee" },
+                text = name.ifBlank { "Employee" }.toTitleCase(),
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 30.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
             )
 
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(14.dp))
 
             StatusCard(state = state, status = status)
 
@@ -368,3 +377,19 @@ private fun SecondaryAction(
         Text(label)
     }
 }
+
+/**
+ * Names are stored in upper case ("VINOTHARAJAH THAVARAJAH"), which shouts on a
+ * phone screen and is harder to read. Render them as "Vinotharajah Thavarajah"
+ * without touching the stored value.
+ */
+private fun String.toTitleCase(): String = trim()
+    .split(" ")
+    .filter { it.isNotBlank() }
+    .joinToString(" ") { word ->
+        word.split("-").joinToString("-") { part ->
+            if (part.isEmpty()) part
+            else part.substring(0, 1).uppercase(Locale.getDefault()) +
+                 part.substring(1).lowercase(Locale.getDefault())
+        }
+    }

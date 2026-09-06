@@ -23,7 +23,10 @@ fun LoginScreen(
     onSignIn: (empId: String, password: String) -> Unit
 ) {
     var empId by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    // Deliberately NOT rememberSaveable: saved instance state is persisted by the
+    // system and would put the password on disk. A rotation clearing the field is
+    // a fair trade.
+    var password by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
