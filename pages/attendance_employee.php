@@ -13,6 +13,18 @@ if (!$employee_id) {
 
 $today = date('Y-m-d');
 $now = date('H:i:s');
+
+// Greet the person by name; the login code (BUE114) is an identifier, not a name.
+$empStmt = $pdo->prepare("SELECT name, emp_id FROM employees WHERE id = ?");
+$empStmt->execute([$employee_id]);
+$employeeRecord = $empStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+$displayName = trim((string) ($employeeRecord['name'] ?? ''));
+if ($displayName === '') {
+    $displayName = (string) ($user['username'] ?? 'Employee');
+}
+
+$hour = (int) date('G');
+$greeting = $hour < 12 ? 'Good Morning' : ($hour < 17 ? 'Good Afternoon' : 'Good Evening');
 $message = '';
 $error = '';
 
@@ -192,11 +204,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="flex items-center">
             <div
                 class="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl mr-4">
-                <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
+                <?php echo strtoupper(substr($displayName, 0, 1)); ?>
             </div>
             <div>
-                <h1 class="text-xl font-bold text-gray-900">Good Morning,
-                    <?php echo htmlspecialchars($user['username']); ?>!
+                <h1 class="text-xl font-bold text-gray-900"><?php echo $greeting; ?>,
+                    <?php echo htmlspecialchars($displayName); ?>!
                 </h1>
                 <p class="text-sm text-gray-500">Employee</p>
             </div>

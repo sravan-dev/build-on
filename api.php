@@ -146,8 +146,11 @@ function normalizeEmployeeContext($employee, $linkedUser = null)
         $employee['user_id'] = (int) ($linkedUser['id'] ?? 0);
         $employee['username'] = $linkedUser['username'] ?? null;
         $employee['employee_name'] = $employee['name'] ?? null;
-        if (!empty($linkedUser['username'])) {
-            // Mobile app should show username instead of linked employee name.
+        // Clients display `name`, so it holds the person's real name. It used to
+        // be overwritten with the login code, which is why the app showed
+        // "BUE114" instead of who that is. The code stays available as `username`
+        // and `emp_id`; fall back to it only when no name is on record.
+        if (empty(trim((string) ($employee['name'] ?? ''))) && !empty($linkedUser['username'])) {
             $employee['name'] = (string) $linkedUser['username'];
         }
     } else {
