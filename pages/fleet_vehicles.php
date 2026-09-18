@@ -23,6 +23,7 @@ $csrf = $_SESSION['fleet_csrf'];
 
 $message = '';
 $error = '';
+$failedPost = null;
 
 $optNum = static function ($v): ?float {
     $v = trim((string) $v);
@@ -108,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_vehicle'])) {
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
+        $failedPost = array_diff_key($_POST, ['csrf' => 1, 'save_vehicle' => 1]) + ['id' => (int) ($_POST['vehicle_id'] ?? 0)];
     }
 }
 
@@ -119,8 +121,8 @@ $vehicles = $pdo->query("SELECT v.*, d.name AS driver_name, p.name AS project_na
 $drivers = $pdo->query("SELECT id, name FROM fleet_drivers WHERE status = 'active' ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 $projects = $pdo->query("SELECT id, name FROM projects ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 
-$editing = null;
-if (isset($_GET['edit'])) {
+$editing = $failedPost ?? null;
+if ($editing === null && isset($_GET['edit'])) {
     foreach ($vehicles as $v) {
         if ((int) $v['id'] === (int) $_GET['edit']) {
             $editing = $v;
@@ -138,20 +140,31 @@ $e = static fn(string $k) => htmlspecialchars((string) ($editing[$k] ?? ''));
         <h1 class="text-3xl font-bold text-gray-900">Vehicles</h1>
         <p class="text-gray-600 mt-2">Fleet master, with the tank size and mileage range the consumption alerts use.</p>
     </div>
-    <?php if (fleetCan('manage') && $editing === null): ?>
-        <a href="index.php?page=fleet_vehicles&edit=new" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md font-medium"><i class="fas fa-plus mr-1"></i>Add Vehicle</a>
+    <?php if (fleetCan('manage')): ?>
+        <button type="button" onclick="openVehicleModal({})" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md font-medium"><i class="fas fa-plus mr-1"></i>Add Vehicle</button>
     <?php endif; ?>
 </div>
 
 <?php if ($message): ?><div class="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-800 rounded"><?php echo htmlspecialchars($message); ?></div><?php endif; ?>
-<?php if ($error): ?><div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
+<?php if ($error && $failedPost === null): ?><div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 
-<?php if ($editing !== null && fleetCan('manage')): ?>
-<div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-lg font-semibold mb-4"><?php echo !empty($editing['id']) ? 'Edit ' . $e('vehicle_number') : 'Add Vehicle'; ?></h2>
-    <form method="post" class="space-y-5">
+<?php if (fleetCan('manage')): ?>
+<!-- Add / Edit Vehicle modal -->
+<div id="vehicleModal" class="hidden fixed z-50 inset-0 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 py-6">
+        <div class="fixed inset-0" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-900 opacity-50" onclick="closeVehicleModal()"></div>
+        </div>
+        <div class="relative bg-white rounded-lg shadow-xl w-full max-w-5xl">
+    <form method="post" id="vehicleForm">
+        <div class="px-5 py-4 border-b flex items-center justify-between">
+            <h3 id="vehicleModalTitle" class="text-lg font-semibold text-gray-900">Add Vehicle</h3>
+            <button type="button" onclick="closeVehicleModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-5">
+        <?php if ($error && $failedPost !== null): ?><div class="px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
         <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($csrf); ?>">
-        <?php if (!empty($editing['id'])): ?><input type="hidden" name="vehicle_id" value="<?php echo (int) $editing['id']; ?>"><?php endif; ?>
+        <input type="hidden" name="vehicle_id" value="">
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div><label class="block text-sm font-medium text-gray-700 mb-1">Vehicle Number *</label><input name="vehicle_number" required value="<?php echo $e('vehicle_number'); ?>" class="w-full px-3 py-2 border rounded-md"></div>
@@ -200,12 +213,53 @@ $e = static fn(string $k) => htmlspecialchars((string) ($editing[$k] ?? ''));
             </div>
         </fieldset>
 
-        <div class="flex justify-end gap-2">
-            <a href="index.php?page=fleet_vehicles" class="px-4 py-2 bg-white border rounded-md">Cancel</a>
+        </div>
+        <div class="px-5 py-4 border-t flex justify-end gap-2">
+            <button type="button" onclick="closeVehicleModal()" class="px-4 py-2 bg-white border rounded-md">Cancel</button>
             <button name="save_vehicle" value="1" class="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-md font-medium">Save Vehicle</button>
         </div>
     </form>
+        </div>
+    </div>
 </div>
+
+<script>
+    const VEHICLE_FIELDS = ['vehicle_number', 'name', 'type', 'vehicle_status', 'make', 'model', 'year', 'color',
+        'chassis_number', 'engine_number', 'registration_renewal_date', 'insurance_renewal_date', 'driver_id',
+        'project_id', 'current_mileage', 'fuel_type', 'fuel_tank_capacity', 'expected_kmpl_min',
+        'expected_kmpl_max', 'max_daily_km'];
+
+    function openVehicleModal(v) {
+        const form = document.getElementById('vehicleForm');
+        VEHICLE_FIELDS.forEach(function (k) {
+            const val = v[k] === null || v[k] === undefined ? '' : String(v[k]);
+            form.elements[k].value = k === 'vehicle_status' ? (val || 'Active') : val;
+        });
+        form.elements['vehicle_id'].value = v.id ? v.id : '';
+        document.getElementById('vehicleModalTitle').textContent = v.id ? 'Edit ' + (v.vehicle_number || 'Vehicle') : 'Add Vehicle';
+        document.getElementById('vehicleModal').classList.remove('hidden');
+        form.elements['vehicle_number'].focus();
+    }
+
+    function closeVehicleModal() {
+        document.getElementById('vehicleModal').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape') closeVehicleModal();
+    });
+
+    // Delegated: the table rows come after this script.
+    document.addEventListener('click', function (ev) {
+        const btn = ev.target.closest('[data-vehicle]');
+        if (btn) openVehicleModal(JSON.parse(btn.dataset.vehicle));
+    });
+
+    <?php if ($editing !== null): ?>
+    // Opened from a link (?edit=) or reopened after a failed save.
+    openVehicleModal(<?php echo json_encode($editing, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>);
+    <?php endif; ?>
+</script>
 <?php endif; ?>
 
 <div class="bg-white rounded-lg shadow-md overflow-x-auto">
@@ -232,7 +286,7 @@ $e = static fn(string $k) => htmlspecialchars((string) ($editing[$k] ?? ''));
                         : '<span class="text-gray-400">not set</span>'; ?></td>
                     <td class="px-4 py-3"><?php echo htmlspecialchars($v['vehicle_status'] ?: 'Active'); ?></td>
                     <td class="px-4 py-3 text-right whitespace-nowrap">
-                        <?php if (fleetCan('manage')): ?><a href="index.php?page=fleet_vehicles&edit=<?php echo (int) $v['id']; ?>" class="text-primary mr-2" title="Edit"><i class="fas fa-edit"></i></a><?php endif; ?>
+                        <?php if (fleetCan('manage')): ?><button type="button" data-vehicle="<?php echo htmlspecialchars(json_encode($v)); ?>" class="text-primary mr-2" title="Edit"><i class="fas fa-edit"></i></button><?php endif; ?>
                         <a href="index.php?page=vehicle_details&id=<?php echo (int) $v['id']; ?>" class="text-gray-500" title="Full details"><i class="fas fa-external-link-alt"></i></a>
                     </td>
                 </tr>
