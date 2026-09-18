@@ -150,18 +150,18 @@ $e = static fn(string $k) => htmlspecialchars((string) ($editing[$k] ?? ''));
 
 <?php if (fleetCan('manage')): ?>
 <!-- Add / Edit Vehicle modal -->
-<div id="vehicleModal" class="hidden fixed z-50 inset-0 overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4 py-6">
+<div id="vehicleModal" class="hidden fixed inset-0" style="z-index: 10000;">
+    <div class="flex items-center justify-center h-full px-4 py-6">
         <div class="fixed inset-0" aria-hidden="true">
             <div class="absolute inset-0 bg-gray-900 opacity-50" onclick="closeVehicleModal()"></div>
         </div>
-        <div class="relative bg-white rounded-lg shadow-xl w-full max-w-5xl">
-    <form method="post" id="vehicleForm">
+        <div class="relative bg-white rounded-lg shadow-xl w-full max-w-5xl flex flex-col" style="max-height: calc(100vh - 3rem);">
+    <form method="post" id="vehicleForm" class="flex flex-col min-h-0">
         <div class="px-5 py-4 border-b flex items-center justify-between">
             <h3 id="vehicleModalTitle" class="text-lg font-semibold text-gray-900">Add Vehicle</h3>
             <button type="button" onclick="closeVehicleModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
         </div>
-        <div class="p-5 space-y-5">
+        <div class="p-5 space-y-5 overflow-y-auto">
         <?php if ($error && $failedPost !== null): ?><div class="px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
         <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($csrf); ?>">
         <input type="hidden" name="vehicle_id" value="">
@@ -229,6 +229,9 @@ $e = static fn(string $k) => htmlspecialchars((string) ($editing[$k] ?? ''));
         'project_id', 'current_mileage', 'fuel_type', 'fuel_tank_capacity', 'expected_kmpl_min',
         'expected_kmpl_max', 'max_daily_km'];
 
+    // Moved under <body> so the sidebar and footer bar cannot sit above it.
+    document.body.appendChild(document.getElementById('vehicleModal'));
+
     function openVehicleModal(v) {
         const form = document.getElementById('vehicleForm');
         VEHICLE_FIELDS.forEach(function (k) {
@@ -238,11 +241,13 @@ $e = static fn(string $k) => htmlspecialchars((string) ($editing[$k] ?? ''));
         form.elements['vehicle_id'].value = v.id ? v.id : '';
         document.getElementById('vehicleModalTitle').textContent = v.id ? 'Edit ' + (v.vehicle_number || 'Vehicle') : 'Add Vehicle';
         document.getElementById('vehicleModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
         form.elements['vehicle_number'].focus();
     }
 
     function closeVehicleModal() {
         document.getElementById('vehicleModal').classList.add('hidden');
+        document.body.style.overflow = '';
     }
 
     document.addEventListener('keydown', function (ev) {
