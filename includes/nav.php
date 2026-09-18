@@ -291,11 +291,50 @@ $activeIconStyle = 'color: #f07d00;';
                     style="<?php echo ($page === 'labour_payments') ? $activeIconStyle : ''; ?>"></i>
                 <span class="ml-3">Labour Payments</span>
             </a>
+            <!-- Vehicle Management (Vehicle_Fleet_Management_Developer_Requirements §18).
+                 The original vehicles page stays, now as Maintenance & Expenses. -->
+            <h6 class="nav-section text-xs text-muted uppercase font-bold px-4 mt-4 mb-2">Vehicle Management</h6>
+            <a href="index.php?page=fleet_dashboard"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'fleet_dashboard') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'fleet_dashboard') ? $activeStyle : ''; ?>">
+                <i class="fas fa-chart-line nav-icon" style="<?php echo ($page === 'fleet_dashboard') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Fleet Dashboard</span>
+            </a>
+            <a href="index.php?page=fleet_daily"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'fleet_daily') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'fleet_daily') ? $activeStyle : ''; ?>">
+                <i class="fas fa-clipboard-list nav-icon" style="<?php echo ($page === 'fleet_daily') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Daily Records</span>
+            </a>
+            <a href="index.php?page=fleet_vehicles"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'fleet_vehicles') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'fleet_vehicles') ? $activeStyle : ''; ?>">
+                <i class="fas fa-truck nav-icon" style="<?php echo ($page === 'fleet_vehicles') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Vehicles</span>
+            </a>
+            <a href="index.php?page=fleet_drivers"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'fleet_drivers') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'fleet_drivers') ? $activeStyle : ''; ?>">
+                <i class="fas fa-id-card nav-icon" style="<?php echo ($page === 'fleet_drivers') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Drivers</span>
+            </a>
+            <a href="index.php?page=fleet_reports"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'fleet_reports') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'fleet_reports') ? $activeStyle : ''; ?>">
+                <i class="fas fa-file-alt nav-icon" style="<?php echo ($page === 'fleet_reports') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Fleet Reports</span>
+            </a>
+            <a href="index.php?page=fleet_audit"
+                class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'fleet_audit') ? 'active' : ''; ?>"
+                style="<?php echo ($page === 'fleet_audit') ? $activeStyle : ''; ?>">
+                <i class="fas fa-history nav-icon" style="<?php echo ($page === 'fleet_audit') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Fleet Audit Trail</span>
+            </a>
             <a href="index.php?page=vehicles"
                 class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'vehicles') ? 'active' : ''; ?>"
                 style="<?php echo ($page === 'vehicles') ? $activeStyle : ''; ?>">
-                <i class="fas fa-car nav-icon" style="<?php echo ($page === 'vehicles') ? $activeIconStyle : ''; ?>"></i>
-                <span class="ml-3">Vehicles</span>
+                <i class="fas fa-tools nav-icon" style="<?php echo ($page === 'vehicles') ? $activeIconStyle : ''; ?>"></i>
+                <span class="ml-3">Maintenance &amp; Expenses</span>
             </a>
             <a href="index.php?page=expenses"
                 class="block px-4 py-3 mb-1 rounded nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>"

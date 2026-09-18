@@ -249,7 +249,27 @@ function required_schema(): array
             ],
             'why' => 'Return to Vendor on the Purchases page reads and writes this table.',
         ],
+        [
+            // Checked on the table the migration creates last, so a partial
+            // run still reports missing and re-running finishes it.
+            'what' => 'Vehicle Management (fleet) schema',
+            'kind' => 'table',
+            'table' => 'fleet_audit_log',
+            'fix' => sql_file_statements(__DIR__ . '/database/add_fleet_management.sql'),
+            'why' => 'Vehicle Management pages: drivers, daily records, alerts and audit trail.',
+        ],
     ];
+}
+
+/** Statements from a migration file: comment lines dropped, split on a trailing ";". */
+function sql_file_statements(string $path): array
+{
+    if (!is_readable($path)) {
+        return [];
+    }
+    $lines = array_filter(file($path, FILE_IGNORE_NEW_LINES), static fn($l) => !preg_match('/^\s*--/', $l));
+    $parts = preg_split('/;\s*$/m', implode("\n", $lines));
+    return array_values(array_filter(array_map('trim', $parts), 'strlen'));
 }
 
 function column_exists(PDO $pdo, string $table, string $column): bool

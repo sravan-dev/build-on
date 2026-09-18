@@ -982,7 +982,7 @@ if (!isset($_SESSION['logged_in'])) {
         }
     }
 
-    $no_layout_pages = ['attendance_report_export', 'voucher_print', 'voucher_pdf'];
+    $no_layout_pages = ['attendance_report_export', 'voucher_print', 'voucher_pdf', 'fleet_export'];
     $is_export = in_array($page, $no_layout_pages);
 
     if (!$is_ajax && !$is_export) {
